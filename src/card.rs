@@ -27,6 +27,15 @@ enum CardVisualBg {
 	Blackish,
 }
 
+pub enum TimeStream {
+	S1800,
+	S1900,
+	S2000,
+	S2100,
+	S2200,
+	S2300,
+}
+
 impl IntoAssetPath for CardVisualBg {
 	fn get_asset_path(&self) -> String {
 		match self {
@@ -65,7 +74,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 	spawn_card_cheating(&mut commands, &mut ass);
 	construct_card_from_visual(
 		CardVisual {
-			bg: CardVisualBg::Yellowish,
+			bg: CardVisualBg::Blackish,
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
 		&mut commands,
