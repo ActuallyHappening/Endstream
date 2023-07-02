@@ -51,8 +51,12 @@ impl EntityCommandsExt for EntityCommands<'_, '_, '_> {
 	}
 }
 
-const CAMERA_POS: Vec3 = Vec3::new(0., 5., 15.);
-const CAMERA_LOOKING_AT: Vec3 = Vec3::new(0., 5., 0.);
+trait IntoAssetPath {
+	fn get_asset_path(&self,) -> String;
+}
+
+const CAMERA_POS: Vec3 = Vec3::new(3., 15., 1.);
+const CAMERA_LOOKING_AT: Vec3 = Vec3::new(3., 5., 0.);
 
 #[derive(Component)]
 struct MainCamera;
@@ -77,12 +81,12 @@ fn setup(
 	commands
 		.spawn(PointLightBundle {
 			point_light: PointLight {
-				intensity: 500.0,
+				intensity: 5000.0,
 				range: 2500.,
 				shadows_enabled: true,
 				..default()
 			},
-			transform: Transform::from_translation(Vec3::default() + Vec3::Y * 10.),
+			transform: Transform::from_translation(CAMERA_POS + Vec3::Y * 10.),
 			..default()
 		})
 		.name("Main light");
