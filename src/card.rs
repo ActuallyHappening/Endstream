@@ -2,7 +2,6 @@
 
 use crate::{EntityCommandsExt, IntoAssetPath, ASS};
 use bevy::prelude::*;
-use meshtext::BoundingBox;
 use strum::IntoStaticStr;
 
 pub enum ControllerCard {

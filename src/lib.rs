@@ -5,6 +5,7 @@ use bevy_rapier3d::prelude::*;
 use card::spawn_all_cards_debug;
 
 mod card;
+mod agendas;
 
 pub type ASS<'a> = (
 	ResMut<'a, Assets<Mesh>>,
