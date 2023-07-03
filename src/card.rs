@@ -151,7 +151,7 @@ fn construct_card_from_visual(
 			century.name("Century marker");
 
 			// century text
-			century.with_children(|century| todo!());
+			// century.with_children(|century| todo!());
 			// end century text
 		}
 		// end spawn century
@@ -172,15 +172,47 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		&mut ass,
 	);
 
-	// let font = ass.2.load("fonts/NotoSans-Regular.ttf");
-	let font = ass.2.load("fonts/FireMono-Medium.ttf");
-	let style = TextStyle {
-		font,
-		color: Color::WHITE,
-		..default()
-	};
-	let text = Text::from_section("please work", style).with_alignment(TextAlignment::Center);
-	commands.spawn(TextBundle { text, ..default() });
+	use meshtext::{MeshGenerator, MeshText, TextSection};
+	let (mut meshs, mut materials, _) = ass;
+	let font_data = include_bytes!(concat!(
+		env!("CARGO_MANIFEST_DIR"),
+		"/assets/fonts/FiraMono-Medium.ttf"
+	));
+	let mut generator = MeshGenerator::new(font_data);
+	let transform = Mat4::from_scale(Vec3::new(1f32, 1f32, 0.2f32)).to_cols_array();
+	let text_mesh: MeshText = generator
+		.generate_section("Hello World!", false, Some(&transform))
+		.unwrap();
+
+	let vertices = text_mesh.vertices;
+	let positions: Vec<[f32; 3]> = vertices.chunks(3).map(|c| [c[0], c[1], c[2]]).collect();
+	let uvs = vec![[0f32, 0f32]; positions.len()];
+
+	let mut mesh = Mesh::new(bevy::render::render_resource::PrimitiveTopology::TriangleList);
+	mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
+	mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
+	mesh.compute_flat_normals();
+
+	// text
+	commands
+		// use this bundle to change the rotation pivot to the center
+		.spawn(PbrBundle {
+			..Default::default()
+		})
+		.with_children(|parent| {
+			// parent is a ChildBuilder, which has a similar API to Commands
+			parent.spawn(PbrBundle {
+				mesh: meshs.add(mesh),
+				material: materials.add(Color::rgb(1f32, 0f32, 0f32).into()),
+				// transform mesh so that it is in the center
+				transform: Transform::from_translation(Vec3::new(
+					text_mesh.bbox.size().x / -2f32,
+					0f32,
+					0f32,
+				)),
+				..Default::default()
+			});
+		});
 }
 
 fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {

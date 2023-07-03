@@ -81,7 +81,7 @@ fn setup(
 	commands
 		.spawn(PointLightBundle {
 			point_light: PointLight {
-				intensity: 5000.0,
+				intensity: 50000.0,
 				range: 2500.,
 				shadows_enabled: true,
 				..default()
