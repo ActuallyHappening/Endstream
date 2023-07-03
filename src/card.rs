@@ -110,7 +110,7 @@ fn construct_card_from_visual(
 	let mesh = meshs.add(shape.into());
 	let material = mat.add(StandardMaterial {
 		base_color_texture: Some(ass.load(visual.bg.get_asset_path())),
-		base_color: visual.bg.colour_factor(),
+		// base_color: visual.bg.colour_factor(),
 		// alpha_mode: AlphaMode::Blend,
 		unlit: true,
 		..default()
@@ -136,7 +136,7 @@ fn construct_card_from_visual(
 			let century_shape = shape::Quad::new(Vec2::new(century_width, century_height));
 			let mesh = meshs.add(century_shape.into());
 
-			let transform = Transform::from_xyz(0., century_y / 2., almost_zero);
+			let century_transform = Transform::from_xyz(0., century_y / 2., almost_zero);
 			let material = mat.add(StandardMaterial {
 				base_color_texture: Some(ass.load(Century::get_asset_path())),
 				alpha_mode: AlphaMode::Blend,
@@ -144,7 +144,7 @@ fn construct_card_from_visual(
 				..default()
 			});
 			let mut century = parent.spawn(PbrBundle {
-				transform,
+				transform: century_transform,
 				mesh,
 				material,
 				..default()
@@ -152,7 +152,16 @@ fn construct_card_from_visual(
 			century.name("Century marker");
 
 			// century text
-			// century.with_children(|century| todo!());
+			const century_text_size: f32 = 0.4;
+			century.with_children(|century| {
+				let (mesh, offset) = get_text_mesh(&start_century.into_num().to_string(), century_text_size);
+				century.spawn(PbrBundle {
+					transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),
+					mesh: meshs.add(mesh),
+					material: mat.add(Color::WHITE.into()),
+					..default()
+				});
+			});
 			// end century text
 		}
 		// end spawn century
@@ -172,38 +181,6 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		&mut commands,
 		&mut ass,
 	);
-
-	spawn_text(
-		"Cool it works!",
-		Transform::from_translation(Vec3::Y * 7.).with_rotation(Quat::from_rotation_x(-90f32.to_radians())),
-		Color::BLUE,
-		2.,
-		&mut commands,
-		&mut ass,
-	);
-}
-
-fn spawn_text(
-	text: &str,
-	center_pos: Transform,
-	colour: Color,
-	pixel_size: f32,
-
-	commands: &mut Commands,
-	(meshs, materials, _): &mut ASS,
-) {
-	let (mesh, offset) = get_text_mesh(text, pixel_size);
-
-	// text
-	commands
-		// parent is a ChildBuilder, which has a similar API to Commands
-		.spawn(PbrBundle {
-			mesh: meshs.add(mesh),
-			material: materials.add(colour.into()),
-			// transform mesh so that it is in the center
-			transform: center_pos.translate(offset),
-			..Default::default()
-		});
 }
 
 /// Returns mesh + offset (to ensure coordinates start in center of text)
@@ -228,7 +205,7 @@ fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
 	mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
 	mesh.compute_flat_normals();
 
-	(mesh, Vec3::X * (text_mesh.bbox.size().x / -2.))
+	(mesh, Vec3::X * (text_mesh.bbox.size().x / -2.) + Vec3::Y * (text_mesh.bbox.size().y / -2.))
 }
 
 fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {
