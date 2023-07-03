@@ -2,6 +2,7 @@
 
 use crate::{EntityCommandsExt, IntoAssetPath, ASS};
 use bevy::prelude::*;
+use meshtext::BoundingBox;
 use strum::IntoStaticStr;
 
 pub enum ControllerCard {
@@ -45,6 +46,16 @@ impl IntoAssetPath for CardVisualBg {
 			CardVisualBg::Yellowish => "cards/Yellow Card Background.png",
 		}
 		.into()
+	}
+}
+
+trait TransformExt {
+	fn translate(self, delta: Vec3) -> Self;
+}
+impl TransformExt for Transform {
+	fn translate(mut self, delta: Vec3) -> Self {
+		self.translation += delta;
+		self
 	}
 }
 
@@ -94,16 +105,6 @@ fn construct_card_from_visual(
 
 	let shape_dimensions = Vec2::new(CARD_WIDTH, CARD_HEIGHT);
 	let shape = shape::Quad::new(shape_dimensions);
-
-	trait TransformExt {
-		fn translate(self, delta: Vec3) -> Self;
-	}
-	impl TransformExt for Transform {
-		fn translate(mut self, delta: Vec3) -> Self {
-			self.translation += delta;
-			self
-		}
-	}
 
 	// spawn background / parent mesh
 	let mesh = meshs.add(shape.into());
@@ -172,16 +173,50 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		&mut ass,
 	);
 
+	spawn_text(
+		"Cool it works!",
+		Transform::from_translation(Vec3::Y * 7.).with_rotation(Quat::from_rotation_x(-90f32.to_radians())),
+		Color::BLUE,
+		2.,
+		&mut commands,
+		&mut ass,
+	);
+}
+
+fn spawn_text(
+	text: &str,
+	center_pos: Transform,
+	colour: Color,
+	pixel_size: f32,
+
+	commands: &mut Commands,
+	(meshs, materials, _): &mut ASS,
+) {
+	let (mesh, offset) = get_text_mesh(text, pixel_size);
+
+	// text
+	commands
+		// parent is a ChildBuilder, which has a similar API to Commands
+		.spawn(PbrBundle {
+			mesh: meshs.add(mesh),
+			material: materials.add(colour.into()),
+			// transform mesh so that it is in the center
+			transform: center_pos.translate(offset),
+			..Default::default()
+		});
+}
+
+/// Returns mesh + offset (to ensure coordinates start in center of text)
+fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
 	use meshtext::{MeshGenerator, MeshText, TextSection};
-	let (mut meshs, mut materials, _) = ass;
 	let font_data = include_bytes!(concat!(
 		env!("CARGO_MANIFEST_DIR"),
-		"/assets/fonts/FiraMono-Medium.ttf"
+		"/assets/fonts/Oswald-Regular.ttf"
 	));
 	let mut generator = MeshGenerator::new(font_data);
-	let transform = Mat4::from_scale(Vec3::new(1f32, 1f32, 0.2f32)).to_cols_array();
+	let transform = Mat4::from_scale(Vec3::new(pixel_size, pixel_size, 0.)).to_cols_array();
 	let text_mesh: MeshText = generator
-		.generate_section("Hello World!", false, Some(&transform))
+		.generate_section(text, true, Some(&transform))
 		.unwrap();
 
 	let vertices = text_mesh.vertices;
@@ -193,26 +228,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 	mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
 	mesh.compute_flat_normals();
 
-	// text
-	commands
-		// use this bundle to change the rotation pivot to the center
-		.spawn(PbrBundle {
-			..Default::default()
-		})
-		.with_children(|parent| {
-			// parent is a ChildBuilder, which has a similar API to Commands
-			parent.spawn(PbrBundle {
-				mesh: meshs.add(mesh),
-				material: materials.add(Color::rgb(1f32, 0f32, 0f32).into()),
-				// transform mesh so that it is in the center
-				transform: Transform::from_translation(Vec3::new(
-					text_mesh.bbox.size().x / -2f32,
-					0f32,
-					0f32,
-				)),
-				..Default::default()
-			});
-		});
+	(mesh, Vec3::X * (text_mesh.bbox.size().x / -2.))
 }
 
 fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {
