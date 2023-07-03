@@ -1,6 +1,9 @@
 #![allow(non_upper_case_globals)]
 
-use crate::{EntityCommandsExt, IntoAssetPath, ASS};
+use crate::{
+	agendas::{AgendaCost, AgendaType, SingleAgendaType},
+	EntityCommandsExt, IntoAssetPath, ASS,
+};
 use bevy::prelude::*;
 use strum::IntoStaticStr;
 
@@ -21,6 +24,7 @@ impl IntoAssetPath for ControllerCard {
 struct CardVisual {
 	bg: CardVisualBg,
 	start_century: Option<Century>,
+	activation_cost: Option<AgendaCost>,
 }
 
 enum CardVisualBg {
@@ -125,17 +129,17 @@ fn construct_card_from_visual(
 	parent.name("Card good (parent)");
 
 	parent.with_children(|parent| {
-		// spawn century icon
+		const top_row_y: f32 = 9.5 / 2.;
 
+		// spawn century icon
 		if let Some(start_century) = visual.start_century {
 			const century_height: f32 = 0.4;
 			const century_width: f32 = 0.8;
-			const century_y: f32 = 9.5;
 
 			let century_shape = shape::Quad::new(Vec2::new(century_width, century_height));
 			let mesh = meshs.add(century_shape.into());
 
-			let century_transform = Transform::from_xyz(0., century_y / 2., almost_zero);
+			let century_transform = Transform::from_xyz(0., top_row_y, almost_zero);
 			let material = mat.add(StandardMaterial {
 				base_color_texture: Some(ass.load(Century::get_asset_path())),
 				alpha_mode: AlphaMode::Blend,
@@ -153,7 +157,8 @@ fn construct_card_from_visual(
 			// century text
 			const century_text_size: f32 = 0.4;
 			century.with_children(|century| {
-				let (mesh, offset) = get_text_mesh(&start_century.into_num().to_string(), century_text_size);
+				let (mesh, offset) =
+					get_text_mesh(&start_century.into_num().to_string(), century_text_size);
 				century.spawn(PbrBundle {
 					transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),
 					mesh: meshs.add(mesh),
@@ -164,6 +169,34 @@ fn construct_card_from_visual(
 			// end century text
 		}
 		// end spawn century
+
+		// spawn agenda cost
+		if let Some(agenda_cost) = visual.activation_cost {
+			let x = -(CARD_WIDTH / 2.0) + agenda_cost.width() / 2.0 + AgendaCost::left_margin;
+			let transform = Transform::from_xyz(x, top_row_y, almost_zero);
+			parent
+				.spawn(PbrBundle {
+					transform,
+					..default()
+				})
+				.with_children(|activation_cost| {
+					// cost frame
+					let cost_frame_shape =
+						shape::Quad::new(Vec2::new(agenda_cost.width(), AgendaCost::height));
+					let material = StandardMaterial {
+						base_color_texture: Some(ass.load(agenda_cost.get_frame_asset_path())),
+						alpha_mode: AlphaMode::Blend,
+						..default()
+					};
+					activation_cost.spawn(PbrBundle {
+						mesh: meshs.add(cost_frame_shape.into()),
+						material: mat.add(material),
+						..default()
+					});
+					// end cost frame
+				});
+		}
+		// end agenda cost
 	});
 
 	parent.id()
@@ -175,6 +208,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		CardVisual {
 			bg: CardVisualBg::Blackish,
 			start_century: Some(Century::S2100),
+			activation_cost: Some(AgendaCost::new_single(2, SingleAgendaType::Military.into())),
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
 		&mut commands,
@@ -204,7 +238,10 @@ fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
 	mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
 	mesh.compute_flat_normals();
 
-	(mesh, Vec3::X * (text_mesh.bbox.size().x / -2.) + Vec3::Y * (text_mesh.bbox.size().y / -2.))
+	(
+		mesh,
+		Vec3::X * (text_mesh.bbox.size().x / -2.) + Vec3::Y * (text_mesh.bbox.size().y / -2.),
+	)
 }
 
 fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {

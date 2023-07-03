@@ -31,8 +31,6 @@ pub enum AgendaType {
 ///   },
 /// }
 /// ```
-///
-/// The second can't be a double agenda if the first is a double agenda
 #[derive(Debug, Clone)]
 pub enum AgendaCost {
 	One {
@@ -55,8 +53,8 @@ pub enum AgendaCost {
 /// ```
 #[derive(Debug, Clone)]
 pub struct AgendaCostItem {
-	number: NonZeroU8,
 	agenda_type: AgendaType,
+	number: NonZeroU8,
 }
 
 // ** implementation blocks **
@@ -72,6 +70,12 @@ impl SingleAgendaType {
 			SingleAgendaType::Politics => "p",
 			SingleAgendaType::Wild => "w",
 		}
+	}
+}
+
+impl From<SingleAgendaType> for AgendaType {
+	fn from(single: SingleAgendaType) -> Self {
+		AgendaType::Single(single)
 	}
 }
 
@@ -101,6 +105,14 @@ impl AgendaType {
 			.map(|single| single.get_abbreviation())
 			.collect()
 	}
+
+	pub fn new_single(single: SingleAgendaType) -> Self {
+		AgendaType::Single(single)
+	}
+
+	pub fn new_double(first: SingleAgendaType, second: SingleAgendaType) -> Self {
+		AgendaType::Double(first, second)
+	}
 }
 
 impl AgendaType {
@@ -124,16 +136,26 @@ impl IntoIterator for AgendaCost {
 }
 
 impl AgendaCost {
+	pub const height: f32 = 0.5;
+	pub const left_margin: f32 = 0.3;
+
+	pub const fn width(&self) -> f32 {
+		match self {
+			AgendaCost::One { .. } => 0.95,
+			AgendaCost::Two { .. } => 1.85,
+		}
+	}
+
 	/// Gets the (path to) frame, on-top of which a number and agenda icon/s are placed
 	pub fn get_frame_asset_path(&self) -> String {
 		match self {
 			AgendaCost::One { only: AgendaCostItem { agenda_type, .. } } => {
 				match agenda_type {
 					AgendaType::Single(..) => {
-						"agenda-icons/cost-frames/1uno.png"
+						"agenda-icons/cost-frames/1uno2none.png"
 					},
 					AgendaType::Double(..) => {
-						"agenda-icons/cost-frames/1duo.png"
+						"agenda-icons/cost-frames/1duo2none.png"
 					},
 				}
 			},
@@ -154,5 +176,27 @@ impl AgendaCost {
 				}
 			}
 		}.to_string()
+	}
+
+	pub fn new_single(number: u8, agenda_type: AgendaType) -> Self {
+		AgendaCost::One {
+			only: AgendaCostItem {
+				number: NonZeroU8::new(number).unwrap(),
+				agenda_type,
+			},
+		}
+	}
+
+	pub fn new_double((first_number, first_agenda_type): (u8, AgendaType), (second_number, second_agenda_type): (u8, AgendaType)) -> Self {
+		AgendaCost::Two {
+			first: AgendaCostItem {
+				number: NonZeroU8::new(first_number).unwrap(),
+				agenda_type: first_agenda_type,
+			},
+			second: AgendaCostItem {
+				number: NonZeroU8::new(second_number).unwrap(),
+				agenda_type: second_agenda_type,
+			},
+		}
 	}
 }

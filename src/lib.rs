@@ -56,6 +56,10 @@ trait IntoAssetPath {
 	fn get_asset_path(&self,) -> String;
 }
 
+trait SpawnToParent {
+	// fn spawn
+}
+
 const CAMERA_POS: Vec3 = Vec3::new(5., 30., 1.);
 const CAMERA_LOOKING_AT: Vec3 = Vec3::new(5., 5., 0.);
 
