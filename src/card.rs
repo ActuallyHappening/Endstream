@@ -26,6 +26,12 @@ struct CardVisual {
 	bg: CardVisualBg,
 	start_century: Option<Century>,
 	activation_cost: Option<AgendaCost>,
+	/// Path to artwork image texture
+	artwork: String,
+}
+
+impl CardVisual {
+	pub const artwork_height: f32 = 5.1;
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -128,11 +134,16 @@ fn construct_card_from_visual(
 		transform: position,
 		..default()
 	});
-	parent.name("Card good (parent)");
+	parent.name("Card (parent)");
+
+	// top row
+	/// Margin of top row from the top of the card
+	/// (and margin between bottom of top row and top of artwork)
+	const top_margin: f32 = 0.4;
+	// const top_row_y: f32 = 9.5 / 2.;
+	const top_row_y: f32 = CARD_HEIGHT / 2. - top_margin;
 
 	parent.with_children(|parent| {
-		const top_row_y: f32 = 9.5 / 2.;
-
 		// spawn century icon
 		if let Some(start_century) = visual.start_century {
 			const century_height: f32 = 0.4;
@@ -310,6 +321,19 @@ fn construct_card_from_visual(
 		}
 		// end agenda cost
 	});
+	// end top row
+
+	// artwork
+	const artwork_y: f32 = top_row_y - CardVisual::artwork_height / 2. - top_margin;
+	parent.with_children(|parent| {
+		parent.spawn(PbrBundle {
+			material: mat.add(texture_2d(ass.load(visual.artwork))),
+			mesh: meshs.add(shape::Quad::new(Vec2::new(CARD_WIDTH, CardVisual::artwork_height)).into()),
+			transform: Transform::from_xyz(0., artwork_y, almost_zero),
+			..default()
+		}).name("Artwork");
+	});
+	// end artwork
 
 	parent.id()
 }
@@ -328,6 +352,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 				(3, SingleAgendaType::Science.into()),
 			)),
 			// activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
+			artwork: String::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
 		&mut commands,
