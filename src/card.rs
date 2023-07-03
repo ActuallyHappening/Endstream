@@ -1,5 +1,7 @@
 #![allow(non_upper_case_globals)]
 
+use std::num::NonZeroU8;
+
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
 	texture_2d, EntityCommandsExt, IntoAssetPath, ASS,
@@ -28,10 +30,37 @@ struct CardVisual {
 	activation_cost: Option<AgendaCost>,
 	/// Path to artwork image texture
 	artwork: String,
+
+	info: GeneralInfo,
 }
 
 impl CardVisual {
 	pub const artwork_height: f32 = 5.1;
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct GeneralInfo {
+	name: String,
+	aka_name: Option<String>,
+	gender: Gender,
+	race: Race,
+
+	health: NonZeroU8,
+}
+
+/// Gender, including `Gender::Neither`
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Gender {
+	Male,
+	Female,
+
+	Neither,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Race {
+	Human,
+	PostHuman,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -144,196 +173,210 @@ fn construct_card_from_visual(
 	const top_row_y: f32 = CARD_HEIGHT / 2. - top_margin;
 
 	parent.with_children(|parent| {
-		// spawn century icon
-		if let Some(start_century) = visual.start_century {
-			const century_height: f32 = 0.4;
-			const century_width: f32 = 0.8;
-
-			let century_shape = shape::Quad::new(Vec2::new(century_width, century_height));
-			let mesh = meshs.add(century_shape.into());
-
-			let century_transform = Transform::from_xyz(0., top_row_y, almost_zero);
-			let material = mat.add(StandardMaterial {
-				base_color_texture: Some(ass.load(Century::get_asset_path())),
-				alpha_mode: AlphaMode::Blend,
-				unlit: true,
+		parent
+			.spawn(PbrBundle {
+				transform: Transform::from_xyz(0., top_row_y, almost_zero),
 				..default()
-			});
-			let mut century = parent.spawn(PbrBundle {
-				transform: century_transform,
-				mesh,
-				material,
-				..default()
-			});
-			century.name("Century marker");
+			})
+			.name("Top row")
+			.with_children(|parent| {
+				// spawn century icon
+				if let Some(start_century) = visual.start_century {
+					const century_height: f32 = 0.4;
+					const century_width: f32 = 0.8;
 
-			// century text
-			const century_text_size: f32 = 0.4;
-			century.with_children(|century| {
-				let (mesh, offset) =
-					get_text_mesh(&start_century.into_num().to_string(), century_text_size);
-				century
-					.spawn(PbrBundle {
-						transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),
-						mesh: meshs.add(mesh),
-						material: mat.add(Color::WHITE.into()),
-						..default()
-					})
-					.name("Century text");
-			});
-			// end century text
-		}
-		// end spawn century
+					let century_shape = shape::Quad::new(Vec2::new(century_width, century_height));
+					let mesh = meshs.add(century_shape.into());
 
-		// spawn agenda cost
-		if let Some(agenda_cost) = visual.activation_cost {
-			let x = -(CARD_WIDTH / 2.0) + agenda_cost.width() / 2.0 + AgendaCost::left_margin;
-			let transform = Transform::from_xyz(x, top_row_y, almost_zero);
-			parent
-				.spawn(PbrBundle {
-					transform,
-					..default()
-				})
-				.name("Activation cost parent")
-				.with_children(|activation_cost| {
-					// cost frame
-					let cost_frame_shape =
-						shape::Quad::new(Vec2::new(agenda_cost.width(), AgendaCost::height));
-					let material = StandardMaterial {
-						base_color_texture: Some(ass.load(agenda_cost.get_frame_asset_path())),
+					let material = mat.add(StandardMaterial {
+						base_color_texture: Some(ass.load(Century::get_asset_path())),
 						alpha_mode: AlphaMode::Blend,
 						unlit: true,
 						..default()
-					};
-					let mut cost_frame = activation_cost.spawn(PbrBundle {
-						mesh: meshs.add(cost_frame_shape.into()),
-						material: mat.add(material),
+					});
+					let mut century = parent.spawn(PbrBundle {
+						mesh,
+						material,
 						..default()
 					});
-					cost_frame.name("Cost frame");
-					// end cost frame
+					century.name("Century marker");
 
-					// agenda icons & numbers
-					cost_frame.with_children(|cost_frame| {
-						let mesh = shape::Quad::new(Vec2::new(AgendaType::width, AgendaType::height));
-						let mesh = meshs.add(mesh.into());
-						const number_size: f32 = 0.2;
-
-						match &agenda_cost {
-							AgendaCost::One { only } => {
-								// icon
-								let material = texture_2d(ass.load(only.agenda.get_icon_asset_path()));
-								// -0.05 is a slight offset, magic number
-								let transform = Transform::from_xyz(0.0 - 0.05, -0.05, almost_zero);
-
-								cost_frame
-									.spawn(PbrBundle {
-										transform,
-										material: mat.add(material),
-										mesh,
-										..default()
-									})
-									.name("Only agenda");
-
-								// number
-								let (mesh, offset) = get_text_mesh(&only.number.to_string(), number_size);
-								let top_right_transform = Transform::from_xyz(
-									cost_frame_shape.size.x / 2. - number_size / 2.,
-									cost_frame_shape.size.y / 2. - number_size / 2.,
-									almost_zero,
-								);
-								cost_frame
-									.spawn(PbrBundle {
-										transform: top_right_transform.translate(offset),
-										mesh: meshs.add(mesh),
-										material: mat.add(Color::WHITE.into()),
-										..default()
-									})
-									.name("Number for only agenda");
-							}
-							AgendaCost::Two { first, second } => {
-								// first
-								let material = texture_2d(ass.load(first.agenda.get_icon_asset_path()));
-								// -0.05 is a slight offset, magic number
-								let transform =
-									Transform::from_xyz(-agenda_cost.width() / 4. - 0.05, -0.05, almost_zero);
-
-								cost_frame
-									.spawn(PbrBundle {
-										transform,
-										material: mat.add(material),
-										mesh: mesh.clone(),
-										..default()
-									})
-									.name("First agenda");
-
-								// first number
-								let (t_mesh, offset) = get_text_mesh(&second.number.to_string(), number_size);
-								let top_right_transform = Transform::from_xyz(
-									- number_size / 2.,
-									cost_frame_shape.size.y / 2. - number_size / 2.,
-									almost_zero,
-								);
-								cost_frame
-									.spawn(PbrBundle {
-										transform: top_right_transform.translate(offset),
-										mesh: meshs.add(t_mesh),
-										material: mat.add(Color::WHITE.into()),
-										..default()
-									})
-									.name("Number for only agenda");
-
-								// second
-								let material = texture_2d(ass.load(second.agenda.get_icon_asset_path()));
-								// -0.05 is a slight offset, magic number
-								let transform =
-									Transform::from_xyz(agenda_cost.width() / 4. - 0.05, 0.0 - 0.05, almost_zero);
-
-								cost_frame
-									.spawn(PbrBundle {
-										transform,
-										material: mat.add(material),
-										mesh,
-										..default()
-									})
-									.name("Second agenda");
-
-								// second number
-								let (mesh, offset) = get_text_mesh(&second.number.to_string(), number_size);
-								let top_right_transform = Transform::from_xyz(
-									cost_frame_shape.size.x / 2. - number_size / 2.,
-									cost_frame_shape.size.y / 2. - number_size / 2.,
-									almost_zero,
-								);
-								cost_frame
-									.spawn(PbrBundle {
-										transform: top_right_transform.translate(offset),
-										mesh: meshs.add(mesh),
-										material: mat.add(Color::WHITE.into()),
-										..default()
-									})
-									.name("Number for only agenda");
-							}
-						}
+					// century text
+					const century_text_size: f32 = 0.4;
+					century.with_children(|century| {
+						let (mesh, offset) =
+							get_text_mesh(&start_century.into_num().to_string(), century_text_size);
+						century
+							.spawn(PbrBundle {
+								transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),
+								mesh: meshs.add(mesh),
+								material: mat.add(Color::WHITE.into()),
+								..default()
+							})
+							.name("Century text");
 					});
-					// end icons & numbers
-				});
-		}
-		// end agenda cost
+					// end century text
+				}
+				// end spawn century
+
+				// spawn agenda cost
+				if let Some(agenda_cost) = visual.activation_cost {
+					let x = -(CARD_WIDTH / 2.0) + agenda_cost.width() / 2.0 + AgendaCost::left_margin;
+					let transform = Transform::from_translation(x * Vec3::X);
+					parent
+						.spawn(PbrBundle {
+							transform,
+							..default()
+						})
+						.name("Activation cost parent")
+						.with_children(|activation_cost| {
+							// cost frame
+							let cost_frame_shape =
+								shape::Quad::new(Vec2::new(agenda_cost.width(), AgendaCost::height));
+							let material = StandardMaterial {
+								base_color_texture: Some(ass.load(agenda_cost.get_frame_asset_path())),
+								alpha_mode: AlphaMode::Blend,
+								unlit: true,
+								..default()
+							};
+							let mut cost_frame = activation_cost.spawn(PbrBundle {
+								mesh: meshs.add(cost_frame_shape.into()),
+								material: mat.add(material),
+								..default()
+							});
+							cost_frame.name("Cost frame");
+							// end cost frame
+
+							// agenda icons & numbers
+							cost_frame.with_children(|cost_frame| {
+								let mesh = shape::Quad::new(Vec2::new(AgendaType::width, AgendaType::height));
+								let mesh = meshs.add(mesh.into());
+								const number_size: f32 = 0.2;
+
+								match &agenda_cost {
+									AgendaCost::One { only } => {
+										// icon
+										let material = texture_2d(ass.load(only.agenda.get_icon_asset_path()));
+										// -0.05 is a slight offset, magic number
+										let transform = Transform::from_xyz(0.0 - 0.05, -0.05, almost_zero);
+
+										cost_frame
+											.spawn(PbrBundle {
+												transform,
+												material: mat.add(material),
+												mesh,
+												..default()
+											})
+											.name("Only agenda");
+
+										// number
+										let (mesh, offset) = get_text_mesh(&only.number.to_string(), number_size);
+										let top_right_transform = Transform::from_xyz(
+											cost_frame_shape.size.x / 2. - number_size / 2.,
+											cost_frame_shape.size.y / 2. - number_size / 2.,
+											almost_zero,
+										);
+										cost_frame
+											.spawn(PbrBundle {
+												transform: top_right_transform.translate(offset),
+												mesh: meshs.add(mesh),
+												material: mat.add(Color::WHITE.into()),
+												..default()
+											})
+											.name("Number for only agenda");
+									}
+									AgendaCost::Two { first, second } => {
+										// first
+										let material = texture_2d(ass.load(first.agenda.get_icon_asset_path()));
+										// -0.05 is a slight offset, magic number
+										let transform =
+											Transform::from_xyz(-agenda_cost.width() / 4. - 0.05, -0.05, almost_zero);
+
+										cost_frame
+											.spawn(PbrBundle {
+												transform,
+												material: mat.add(material),
+												mesh: mesh.clone(),
+												..default()
+											})
+											.name("First agenda");
+
+										// first number
+										let (t_mesh, offset) = get_text_mesh(&second.number.to_string(), number_size);
+										let top_right_transform = Transform::from_xyz(
+											-number_size / 2.,
+											cost_frame_shape.size.y / 2. - number_size / 2.,
+											almost_zero,
+										);
+										cost_frame
+											.spawn(PbrBundle {
+												transform: top_right_transform.translate(offset),
+												mesh: meshs.add(t_mesh),
+												material: mat.add(Color::WHITE.into()),
+												..default()
+											})
+											.name("Number for only agenda");
+
+										// second
+										let material = texture_2d(ass.load(second.agenda.get_icon_asset_path()));
+										// -0.05 is a slight offset, magic number
+										let transform =
+											Transform::from_xyz(agenda_cost.width() / 4. - 0.05, 0.0 - 0.05, almost_zero);
+
+										cost_frame
+											.spawn(PbrBundle {
+												transform,
+												material: mat.add(material),
+												mesh,
+												..default()
+											})
+											.name("Second agenda");
+
+										// second number
+										let (mesh, offset) = get_text_mesh(&second.number.to_string(), number_size);
+										let top_right_transform = Transform::from_xyz(
+											cost_frame_shape.size.x / 2. - number_size / 2.,
+											cost_frame_shape.size.y / 2. - number_size / 2.,
+											almost_zero,
+										);
+										cost_frame
+											.spawn(PbrBundle {
+												transform: top_right_transform.translate(offset),
+												mesh: meshs.add(mesh),
+												material: mat.add(Color::WHITE.into()),
+												..default()
+											})
+											.name("Number for only agenda");
+									}
+								}
+							});
+							// end icons & numbers
+						});
+				}
+				// end agenda cost
+			});
 	});
 	// end top row
 
 	// artwork
 	const artwork_y: f32 = top_row_y - CardVisual::artwork_height / 2. - top_margin;
 	parent.with_children(|parent| {
-		parent.spawn(PbrBundle {
-			material: mat.add(texture_2d(ass.load(visual.artwork))),
-			mesh: meshs.add(shape::Quad::new(Vec2::new(CARD_WIDTH, CardVisual::artwork_height)).into()),
-			transform: Transform::from_xyz(0., artwork_y, almost_zero),
-			..default()
-		}).name("Artwork");
+		parent
+			.spawn(PbrBundle {
+				material: mat.add(texture_2d(ass.load(visual.artwork))),
+				mesh: meshs.add(shape::Quad::new(Vec2::new(CARD_WIDTH, CardVisual::artwork_height)).into()),
+				transform: Transform::from_xyz(0., artwork_y, almost_zero),
+				..default()
+			})
+			.name("Artwork");
 	});
 	// end artwork
+
+	// general info row
+	const general_height: f32 = 0.98;
+	const general_y: f32 = artwork_y - CardVisual::artwork_height / 2. - general_height / 2.;
+	parent.with_children(|parent| {});
+	// end general info
 
 	parent.id()
 }
@@ -353,6 +396,13 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 			)),
 			// activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
 			artwork: String::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
+			info: GeneralInfo {
+				name: "Mori".to_string(),
+				aka_name: Some("The Piercer".to_string()),
+				gender: Gender::Male,
+				race: Race::Human,
+				health: NonZeroU8::new(1).unwrap(),
+			},
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
 		&mut commands,
