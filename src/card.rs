@@ -183,43 +183,6 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 	commands.spawn(TextBundle { text, ..default() });
 }
 
-pub fn render_text(
-	at: Transform,
-	content: &str,
-	font_file: &str,
-	commands: &mut Commands,
-	asset_server: ResMut<AssetServer>,
-	materials: ResMut<Assets<Mesh>>,
-	meshs: ResMut<Assets<Mesh>>,
-) {
-	// load font
-	let font = asset_server.load(font_file);
-
-	// create text
-	let text_something_idk = todo!();
-
-	commands.spawn(text_something_idk);
-}
-
-
-pub fn render_text(
-	at: Transform,
-	content: &str,
-	font_file: &str,
-	commands: &mut Commands,
-	asset_server: ResMut<AssetServer>,
-	materials: ResMut<Assets<Mesh>>,
-	meshs: ResMut<Assets<Mesh>>,
-) {
-	// load font
-	let font = asset_server.load(font_file);
-
-	// create text
-	let text_something_idk = todo!();
-
-	commands.spawn(text_something_idk);
-}
-
 fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {
 	let mesh = meshs.add(shape::Box::new(CARD_WIDTH, 0.1, CARD_HEIGHT).into());
 	let material = mat.add(StandardMaterial {
