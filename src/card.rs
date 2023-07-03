@@ -2,7 +2,7 @@
 
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
-	EntityCommandsExt, IntoAssetPath, ASS,
+	texture_2d, EntityCommandsExt, IntoAssetPath, ASS,
 };
 use bevy::prelude::*;
 use strum::IntoStaticStr;
@@ -21,12 +21,14 @@ impl IntoAssetPath for ControllerCard {
 	}
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct CardVisual {
 	bg: CardVisualBg,
 	start_century: Option<Century>,
 	activation_cost: Option<AgendaCost>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum CardVisualBg {
 	Yellowish,
 	Blackish,
@@ -62,7 +64,7 @@ impl TransformExt for Transform {
 	}
 }
 
-#[derive(IntoStaticStr)]
+#[derive(IntoStaticStr, Debug, Clone, PartialEq, Eq)]
 pub enum Century {
 	S1800,
 	S1900,
@@ -159,12 +161,14 @@ fn construct_card_from_visual(
 			century.with_children(|century| {
 				let (mesh, offset) =
 					get_text_mesh(&start_century.into_num().to_string(), century_text_size);
-				century.spawn(PbrBundle {
-					transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),
-					mesh: meshs.add(mesh),
-					material: mat.add(Color::WHITE.into()),
-					..default()
-				});
+				century
+					.spawn(PbrBundle {
+						transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),
+						mesh: meshs.add(mesh),
+						material: mat.add(Color::WHITE.into()),
+						..default()
+					})
+					.name("Century text");
 			});
 			// end century text
 		}
@@ -179,6 +183,7 @@ fn construct_card_from_visual(
 					transform,
 					..default()
 				})
+				.name("Activation cost parent")
 				.with_children(|activation_cost| {
 					// cost frame
 					let cost_frame_shape =
@@ -189,14 +194,54 @@ fn construct_card_from_visual(
 						unlit: true,
 						..default()
 					};
-					activation_cost.spawn(PbrBundle {
+					let mut cost_frame = activation_cost.spawn(PbrBundle {
 						mesh: meshs.add(cost_frame_shape.into()),
 						material: mat.add(material),
 						..default()
 					});
+					cost_frame.name("Cost frame");
 					// end cost frame
 
+					// agenda icons
+					cost_frame.with_children(|cost_frame| {
+						let mesh = shape::Quad::new(Vec2::new(AgendaType::width, AgendaType::height));
+						let mesh_h = meshs.add(mesh.into());
+						match &agenda_cost {
+							AgendaCost::One { only } => {
+								todo!()
+							}
+							AgendaCost::Two { first, second } => {
+								// first
+								let material = texture_2d(ass.load(first.agenda.get_icon_asset_path()));
+								// -0.05 is a slight offset, magic number
+								let transform =
+									Transform::from_xyz(-agenda_cost.width() / 4. - 0.05, -0.05, almost_zero);
 
+								cost_frame
+									.spawn(PbrBundle {
+										transform,
+										material: mat.add(material),
+										mesh: mesh_h.clone(),
+										..default()
+									})
+									.name("First agenda of double cost");
+
+								// second
+								let material = texture_2d(ass.load(second.agenda.get_icon_asset_path()));
+								// -0.05 is a slight offset, magic number
+								let transform =
+									Transform::from_xyz(agenda_cost.width() / 4. -0.05, 0.0 - 0.05, almost_zero);
+								
+								cost_frame.spawn(PbrBundle {
+									transform,
+									material: mat.add(material),
+									mesh: mesh_h,
+									..default()
+								}).name("Second agenda of double cost");
+							}
+						}
+					});
+					// end icons
 				});
 		}
 		// end agenda cost
@@ -211,7 +256,13 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		CardVisual {
 			bg: CardVisualBg::Blackish,
 			start_century: Some(Century::S2100),
-			activation_cost: Some(AgendaCost::new_double((2, SingleAgendaType::Military.into()), (3, SingleAgendaType::Science.into()))),
+			activation_cost: Some(AgendaCost::new_double(
+				(
+					2,
+					(SingleAgendaType::Military, SingleAgendaType::Wild).into(),
+				),
+				(3, SingleAgendaType::Science.into()),
+			)),
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
 		&mut commands,

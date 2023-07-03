@@ -15,7 +15,7 @@ pub enum SingleAgendaType {
 /// ```rust
 /// AgendaType::Single(SingleAgendaType::Wild)
 /// ```
-#[derive(Debug, Clone, EnumIs)]
+#[derive(Debug, Clone, EnumIs, PartialEq, Eq)]
 pub enum AgendaType {
 	Single(SingleAgendaType),
 	Double(SingleAgendaType, SingleAgendaType),
@@ -31,7 +31,7 @@ pub enum AgendaType {
 ///   },
 /// }
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AgendaCost {
 	One {
 		only: AgendaCostItem,
@@ -51,10 +51,10 @@ pub enum AgendaCost {
 /// 	agenda_type: AgendaType::Single(SingleAgendaType::Wild),
 /// }
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AgendaCostItem {
-	agenda_type: AgendaType,
-	number: NonZeroU8,
+	pub agenda: AgendaType,
+	pub number: NonZeroU8,
 }
 
 // ** implementation blocks **
@@ -68,7 +68,7 @@ impl SingleAgendaType {
 			SingleAgendaType::Military => "m",
 			SingleAgendaType::Science => "s",
 			SingleAgendaType::Politics => "p",
-			SingleAgendaType::Wild => "w",
+			SingleAgendaType::Wild => "x",
 		}
 	}
 }
@@ -76,6 +76,12 @@ impl SingleAgendaType {
 impl From<SingleAgendaType> for AgendaType {
 	fn from(single: SingleAgendaType) -> Self {
 		AgendaType::Single(single)
+	}
+}
+
+impl From <(SingleAgendaType, SingleAgendaType)> for AgendaType {
+	fn from((first, second): (SingleAgendaType, SingleAgendaType)) -> Self {
+		AgendaType::Double(first, second)
 	}
 }
 
@@ -93,6 +99,9 @@ impl IntoIterator for AgendaType {
 }
 
 impl AgendaType {
+	pub const width: f32 = 0.8;
+	pub const height: f32 = 0.35;
+
 	/// ```rust
 	/// use endstream::agendas::{AgendaType, SingleAgendaType};
 	/// let agenda_type = AgendaType::Double(SingleAgendaType::Military, SingleAgendaType::Science);
@@ -149,7 +158,7 @@ impl AgendaCost {
 	/// Gets the (path to) frame, on-top of which a number and agenda icon/s are placed
 	pub fn get_frame_asset_path(&self) -> String {
 		match self {
-			AgendaCost::One { only: AgendaCostItem { agenda_type, .. } } => {
+			AgendaCost::One { only: AgendaCostItem { agenda: agenda_type, .. } } => {
 				match agenda_type {
 					AgendaType::Single(..) => {
 						"agenda-icons/cost-frames/1uno2none.png"
@@ -159,7 +168,7 @@ impl AgendaCost {
 					},
 				}
 			},
-			AgendaCost::Two { first: AgendaCostItem { agenda_type: type1, .. }, second: AgendaCostItem { agenda_type: type2, .. } } => {
+			AgendaCost::Two { first: AgendaCostItem { agenda: type1, .. }, second: AgendaCostItem { agenda: type2, .. } } => {
 				match (type1, type2) {
 					(AgendaType::Single(..), AgendaType::Single(..)) => {
 						"agenda-icons/cost-frames/1uno2uno.png"
@@ -182,7 +191,7 @@ impl AgendaCost {
 		AgendaCost::One {
 			only: AgendaCostItem {
 				number: NonZeroU8::new(number).unwrap(),
-				agenda_type,
+				agenda: agenda_type,
 			},
 		}
 	}
@@ -191,11 +200,11 @@ impl AgendaCost {
 		AgendaCost::Two {
 			first: AgendaCostItem {
 				number: NonZeroU8::new(first_number).unwrap(),
-				agenda_type: first_agenda_type,
+				agenda: first_agenda_type,
 			},
 			second: AgendaCostItem {
 				number: NonZeroU8::new(second_number).unwrap(),
-				agenda_type: second_agenda_type,
+				agenda: second_agenda_type,
 			},
 		}
 	}

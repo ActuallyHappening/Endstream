@@ -60,6 +60,15 @@ trait SpawnToParent {
 	// fn spawn
 }
 
+fn texture_2d(texture_handle: Handle<Image>) -> StandardMaterial {
+	StandardMaterial {
+		base_color_texture: Some(texture_handle),
+		unlit: true,
+		alpha_mode: AlphaMode::Blend,
+		..default()
+	}
+}
+
 const CAMERA_POS: Vec3 = Vec3::new(5., 20., 1.);
 const CAMERA_LOOKING_AT: Vec3 = Vec3::new(5., 5., 0.);
 
