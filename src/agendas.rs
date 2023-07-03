@@ -146,7 +146,6 @@ impl IntoIterator for AgendaCost {
 
 impl AgendaCost {
 	pub const height: f32 = 0.5;
-	pub const left_margin: f32 = 0.3;
 
 	pub const fn width(&self) -> f32 {
 		match self {

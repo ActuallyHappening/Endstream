@@ -165,7 +165,9 @@ fn construct_card_from_visual(
 	});
 	parent.name("Card (parent)");
 
-	// top row
+	const left_margin: f32 = 0.3;
+
+	// #region top row
 	/// Margin of top row from the top of the card
 	/// (and margin between bottom of top row and top of artwork)
 	const top_margin: f32 = 0.4;
@@ -188,12 +190,7 @@ fn construct_card_from_visual(
 					let century_shape = shape::Quad::new(Vec2::new(century_width, century_height));
 					let mesh = meshs.add(century_shape.into());
 
-					let material = mat.add(StandardMaterial {
-						base_color_texture: Some(ass.load(Century::get_asset_path())),
-						alpha_mode: AlphaMode::Blend,
-						unlit: true,
-						..default()
-					});
+					let material = mat.add(texture_2d(ass.load(Century::get_asset_path())));
 					let mut century = parent.spawn(PbrBundle {
 						mesh,
 						material,
@@ -221,7 +218,7 @@ fn construct_card_from_visual(
 
 				// spawn agenda cost
 				if let Some(agenda_cost) = visual.activation_cost {
-					let x = -(CARD_WIDTH / 2.0) + agenda_cost.width() / 2.0 + AgendaCost::left_margin;
+					let x = -(CARD_WIDTH / 2.0) + agenda_cost.width() / 2.0 + left_margin;
 					let transform = Transform::from_translation(x * Vec3::X);
 					parent
 						.spawn(PbrBundle {
@@ -233,12 +230,7 @@ fn construct_card_from_visual(
 							// cost frame
 							let cost_frame_shape =
 								shape::Quad::new(Vec2::new(agenda_cost.width(), AgendaCost::height));
-							let material = StandardMaterial {
-								base_color_texture: Some(ass.load(agenda_cost.get_frame_asset_path())),
-								alpha_mode: AlphaMode::Blend,
-								unlit: true,
-								..default()
-							};
+							let material = texture_2d(ass.load(agenda_cost.get_frame_asset_path()));
 							let mut cost_frame = activation_cost.spawn(PbrBundle {
 								mesh: meshs.add(cost_frame_shape.into()),
 								material: mat.add(material),
@@ -356,9 +348,9 @@ fn construct_card_from_visual(
 				// end agenda cost
 			});
 	});
-	// end top row
+	// #endregion end top row
 
-	// artwork
+	// #region artwork
 	const artwork_y: f32 = top_row_y - CardVisual::artwork_height / 2. - top_margin;
 	parent.with_children(|parent| {
 		parent
@@ -370,13 +362,23 @@ fn construct_card_from_visual(
 			})
 			.name("Artwork");
 	});
-	// end artwork
+	// #endregion end artwork
 
-	// general info row
+	// #region general info row
 	const general_height: f32 = 0.98;
 	const general_y: f32 = artwork_y - CardVisual::artwork_height / 2. - general_height / 2.;
-	parent.with_children(|parent| {});
-	// end general info
+	parent.with_children(|general_row| {
+		let general = visual.info;
+		const general_text_size: f32 = 0.3;
+		let name_mesh = get_text_mesh_with_bbox(&general.name, general_text_size);
+		// #region names
+		// general_row.spawn(PbrBundle {
+		// 	transform: Transform::from_xyz(-CARD_WIDTH / 2. + left_margin),
+		// 	..default()
+		// }).name("Names row");
+		// #endregion names
+	});
+	// #endregion end general info
 
 	parent.id()
 }
@@ -410,8 +412,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 	);
 }
 
-/// Returns mesh + offset (to ensure coordinates start in center of text)
-fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
+fn get_text_mesh_with_bbox(text: &str, pixel_size: f32) -> (Mesh, meshtext::BoundingBox) {
 	use meshtext::{MeshGenerator, MeshText, TextSection};
 	let font_data = include_bytes!(concat!(
 		env!("CARGO_MANIFEST_DIR"),
@@ -432,10 +433,23 @@ fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
 	mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
 	mesh.compute_flat_normals();
 
-	(
-		mesh,
-		Vec3::X * (text_mesh.bbox.size().x / -2.) + Vec3::Y * (text_mesh.bbox.size().y / -2.),
-	)
+	(mesh, text_mesh.bbox)
+}
+
+trait BoundingBoxExt {
+	fn get_required_text_offset(self) -> Vec3;
+}
+
+impl BoundingBoxExt for meshtext::BoundingBox {
+	fn get_required_text_offset(self) -> Vec3 {
+		Vec3::X * (self.size().x / -2.) + Vec3::Y * (self.size().y / -2.)
+	}
+}
+
+/// Returns mesh + offset (to ensure coordinates start in center of text)
+fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
+	let (mesh, bbox) = get_text_mesh_with_bbox(text, pixel_size);
+	(mesh, bbox.get_required_text_offset())
 }
 
 fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {
