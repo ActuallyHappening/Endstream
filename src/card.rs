@@ -205,10 +205,22 @@ fn construct_card_from_visual(
 					// agenda icons
 					cost_frame.with_children(|cost_frame| {
 						let mesh = shape::Quad::new(Vec2::new(AgendaType::width, AgendaType::height));
-						let mesh_h = meshs.add(mesh.into());
+						let mesh = meshs.add(mesh.into());
 						match &agenda_cost {
 							AgendaCost::One { only } => {
-								todo!()
+								let material = texture_2d(ass.load(only.agenda.get_icon_asset_path()));
+								// -0.05 is a slight offset, magic number
+								let transform =
+									Transform::from_xyz(0.0 - 0.05, -0.05, almost_zero);
+
+								cost_frame
+									.spawn(PbrBundle {
+										transform,
+										material: mat.add(material),
+										mesh,
+										..default()
+									})
+									.name("Only agenda");
 							}
 							AgendaCost::Two { first, second } => {
 								// first
@@ -221,23 +233,25 @@ fn construct_card_from_visual(
 									.spawn(PbrBundle {
 										transform,
 										material: mat.add(material),
-										mesh: mesh_h.clone(),
+										mesh: mesh.clone(),
 										..default()
 									})
-									.name("First agenda of double cost");
+									.name("First agenda");
 
 								// second
 								let material = texture_2d(ass.load(second.agenda.get_icon_asset_path()));
 								// -0.05 is a slight offset, magic number
 								let transform =
-									Transform::from_xyz(agenda_cost.width() / 4. -0.05, 0.0 - 0.05, almost_zero);
-								
-								cost_frame.spawn(PbrBundle {
-									transform,
-									material: mat.add(material),
-									mesh: mesh_h,
-									..default()
-								}).name("Second agenda of double cost");
+									Transform::from_xyz(agenda_cost.width() / 4. - 0.05, 0.0 - 0.05, almost_zero);
+
+								cost_frame
+									.spawn(PbrBundle {
+										transform,
+										material: mat.add(material),
+										mesh,
+										..default()
+									})
+									.name("Second agenda");
 							}
 						}
 					});
@@ -256,13 +270,14 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		CardVisual {
 			bg: CardVisualBg::Blackish,
 			start_century: Some(Century::S2100),
-			activation_cost: Some(AgendaCost::new_double(
-				(
-					2,
-					(SingleAgendaType::Military, SingleAgendaType::Wild).into(),
-				),
-				(3, SingleAgendaType::Science.into()),
-			)),
+			// activation_cost: Some(AgendaCost::new_double(
+			// 	(
+			// 		2,
+			// 		(SingleAgendaType::Military, SingleAgendaType::Wild).into(),
+			// 	),
+			// 	(3, SingleAgendaType::Science.into()),
+			// )),
+			activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
 		&mut commands,
