@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_fly_camera::FlyCameraPlugin;
 use bevy_mod_picking::prelude::*;
-use duck_man::MainPlugin;
+use endstream::MainPlugin;
 
 fn main() {
 	App::new()
