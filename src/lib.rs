@@ -60,7 +60,7 @@ trait SpawnToParent {
 	// fn spawn
 }
 
-const CAMERA_POS: Vec3 = Vec3::new(5., 30., 1.);
+const CAMERA_POS: Vec3 = Vec3::new(5., 20., 1.);
 const CAMERA_LOOKING_AT: Vec3 = Vec3::new(5., 5., 0.);
 
 #[derive(Component)]

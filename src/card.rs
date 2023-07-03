@@ -186,6 +186,7 @@ fn construct_card_from_visual(
 					let material = StandardMaterial {
 						base_color_texture: Some(ass.load(agenda_cost.get_frame_asset_path())),
 						alpha_mode: AlphaMode::Blend,
+						unlit: true,
 						..default()
 					};
 					activation_cost.spawn(PbrBundle {
@@ -194,6 +195,8 @@ fn construct_card_from_visual(
 						..default()
 					});
 					// end cost frame
+
+
 				});
 		}
 		// end agenda cost
@@ -208,7 +211,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		CardVisual {
 			bg: CardVisualBg::Blackish,
 			start_century: Some(Century::S2100),
-			activation_cost: Some(AgendaCost::new_single(2, SingleAgendaType::Military.into())),
+			activation_cost: Some(AgendaCost::new_double((2, SingleAgendaType::Military.into()), (3, SingleAgendaType::Science.into()))),
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
 		&mut commands,
@@ -248,6 +251,7 @@ fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {
 	let mesh = meshs.add(shape::Box::new(CARD_WIDTH, 0.1, CARD_HEIGHT).into());
 	let material = mat.add(StandardMaterial {
 		base_color_texture: Some(ass.load(ControllerCard::Ssv93Ural.get_asset_path())),
+		unlit: true,
 		..default()
 	});
 	commands
