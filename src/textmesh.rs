@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use meshtext::{MeshGenerator, MeshText, TextSection};
 
+/// Generates text mesh
 pub fn get_text_mesh_with_bbox(text: &str, pixel_size: f32) -> (Mesh, meshtext::BoundingBox) {
 	let font_data = include_bytes!(concat!(
 		env!("CARGO_MANIFEST_DIR"),
@@ -36,7 +37,8 @@ impl BoundingBoxExt for meshtext::BoundingBox {
 	}
 }
 
-/// Returns mesh + offset (to ensure coordinates start in center of text)
+/// Returns mesh + offset (to ensure coordinates start in center of text).
+/// Without taking offset into account, text will be rendered with *top right* corner at center of entity.
 pub fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
 	let (mesh, bbox) = get_text_mesh_with_bbox(text, pixel_size);
 	(mesh, bbox.get_required_text_offset())
