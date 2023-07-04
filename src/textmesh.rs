@@ -3,11 +3,7 @@ use meshtext::{MeshGenerator, MeshText, TextSection};
 
 /// Generates text mesh
 pub fn get_text_mesh_with_bbox(text: &str, pixel_size: f32) -> (Mesh, meshtext::BoundingBox) {
-	let font_data = include_bytes!(concat!(
-		env!("CARGO_MANIFEST_DIR"),
-		"/assets/fonts/Oswald-Regular.ttf"
-	));
-	let font_data = include_bytes!("../assets/fonts/Oswald-Regular.ttf");
+	let font_data = include_bytes!("../assets/fonts/Oswald-Light.ttf");
 
 	let mut generator = MeshGenerator::new(font_data);
 	let transform = Mat4::from_scale(Vec3::new(pixel_size, pixel_size, 0.)).to_cols_array();
