@@ -1,4 +1,3 @@
-use crate::IntoAssetPath;
 use std::num::NonZeroU8;
 use strum::{EnumIs, EnumIter, EnumString, IntoStaticStr};
 

@@ -2,9 +2,11 @@
 
 use std::num::NonZeroU8;
 
+use crate::ext::{EntityCommandsExt, IntoAssetPath, ASS};
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
-	texture_2d, EntityCommandsExt, IntoAssetPath, ASS,
+	textmesh::{get_text_mesh, get_text_mesh_with_bbox},
+	texture_2d,
 };
 use bevy::prelude::*;
 use strum::IntoStaticStr;
@@ -99,37 +101,13 @@ impl TransformExt for Transform {
 	}
 }
 
-#[derive(IntoStaticStr, Debug, Clone, PartialEq, Eq)]
-pub enum Century {
-	S1800,
-	S1900,
-	S2000,
-	S2100,
-	S2200,
-	S2300,
-}
-
-impl Century {
-	pub fn into_num(&self) -> u16 {
-		match self {
-			Century::S1800 => 1800,
-			Century::S1900 => 1900,
-			Century::S2000 => 2000,
-			Century::S2100 => 2100,
-			Century::S2200 => 2200,
-			Century::S2300 => 2300,
-		}
-	}
-}
-
-impl Century {
-	fn get_asset_path() -> &'static str {
-		"card-icons/century-icon.png"
-	}
-}
+mod century;
+use century::Century;
 
 pub const CARD_WIDTH: f32 = 6.2;
 pub const CARD_HEIGHT: f32 = 10.3;
+
+const almost_zero: f32 = 0.01;
 
 /// Constructs a card from component [CardVisual] parts and
 /// returns entity id.
@@ -141,7 +119,7 @@ fn construct_card_from_visual(
 	commands: &mut Commands,
 	(meshs, mat, ass): &mut ASS,
 ) -> Entity {
-	const almost_zero: f32 = 0.01;
+	
 
 	let shape_dimensions = Vec2::new(CARD_WIDTH, CARD_HEIGHT);
 	let shape = shape::Quad::new(shape_dimensions);
@@ -167,7 +145,7 @@ fn construct_card_from_visual(
 
 	const left_margin: f32 = 0.3;
 
-	// #region top row
+	/* #region top row */
 	/// Margin of top row from the top of the card
 	/// (and margin between bottom of top row and top of artwork)
 	const top_margin: f32 = 0.4;
@@ -183,37 +161,7 @@ fn construct_card_from_visual(
 			.name("Top row")
 			.with_children(|parent| {
 				// spawn century icon
-				if let Some(start_century) = visual.start_century {
-					const century_height: f32 = 0.4;
-					const century_width: f32 = 0.8;
-
-					let century_shape = shape::Quad::new(Vec2::new(century_width, century_height));
-					let mesh = meshs.add(century_shape.into());
-
-					let material = mat.add(texture_2d(ass.load(Century::get_asset_path())));
-					let mut century = parent.spawn(PbrBundle {
-						mesh,
-						material,
-						..default()
-					});
-					century.name("Century marker");
-
-					// century text
-					const century_text_size: f32 = 0.4;
-					century.with_children(|century| {
-						let (mesh, offset) =
-							get_text_mesh(&start_century.into_num().to_string(), century_text_size);
-						century
-							.spawn(PbrBundle {
-								transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),
-								mesh: meshs.add(mesh),
-								material: mat.add(Color::WHITE.into()),
-								..default()
-							})
-							.name("Century text");
-					});
-					// end century text
-				}
+				if let Some(start_century) = visual.start_century {}
 				// end spawn century
 
 				// spawn agenda cost
@@ -348,9 +296,9 @@ fn construct_card_from_visual(
 				// end agenda cost
 			});
 	});
-	// #endregion end top row
+	/* #endregion top row */
 
-	// #region artwork
+	/* #region artwork */
 	const artwork_y: f32 = top_row_y - CardVisual::artwork_height / 2. - top_margin;
 	parent.with_children(|parent| {
 		parent
@@ -362,7 +310,7 @@ fn construct_card_from_visual(
 			})
 			.name("Artwork");
 	});
-	// #endregion end artwork
+	/* #endregion artwork */
 
 	// #region general info row
 	const general_height: f32 = 0.98;
@@ -410,46 +358,6 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		&mut commands,
 		&mut ass,
 	);
-}
-
-fn get_text_mesh_with_bbox(text: &str, pixel_size: f32) -> (Mesh, meshtext::BoundingBox) {
-	use meshtext::{MeshGenerator, MeshText, TextSection};
-	let font_data = include_bytes!(concat!(
-		env!("CARGO_MANIFEST_DIR"),
-		"/assets/fonts/Oswald-Regular.ttf"
-	));
-	let mut generator = MeshGenerator::new(font_data);
-	let transform = Mat4::from_scale(Vec3::new(pixel_size, pixel_size, 0.)).to_cols_array();
-	let text_mesh: MeshText = generator
-		.generate_section(text, true, Some(&transform))
-		.unwrap();
-
-	let vertices = text_mesh.vertices;
-	let positions: Vec<[f32; 3]> = vertices.chunks(3).map(|c| [c[0], c[1], c[2]]).collect();
-	let uvs = vec![[0f32, 0f32]; positions.len()];
-
-	let mut mesh = Mesh::new(bevy::render::render_resource::PrimitiveTopology::TriangleList);
-	mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
-	mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
-	mesh.compute_flat_normals();
-
-	(mesh, text_mesh.bbox)
-}
-
-trait BoundingBoxExt {
-	fn get_required_text_offset(self) -> Vec3;
-}
-
-impl BoundingBoxExt for meshtext::BoundingBox {
-	fn get_required_text_offset(self) -> Vec3 {
-		Vec3::X * (self.size().x / -2.) + Vec3::Y * (self.size().y / -2.)
-	}
-}
-
-/// Returns mesh + offset (to ensure coordinates start in center of text)
-fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
-	let (mesh, bbox) = get_text_mesh_with_bbox(text, pixel_size);
-	(mesh, bbox.get_required_text_offset())
 }
 
 fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {
