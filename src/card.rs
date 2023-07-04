@@ -1,7 +1,6 @@
 #![allow(non_upper_case_globals)]
 
 use std::num::NonZeroU8;
-
 use crate::ext::{EntityCommandsExt, IntoAssetPath, ASS, SpawnToParent};
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
@@ -9,7 +8,10 @@ use crate::{
 	texture_2d,
 };
 use bevy::prelude::*;
-use strum::IntoStaticStr;
+
+mod century;
+use century::Century;
+mod agenda;
 
 pub enum ControllerCard {
 	Ssv93Ural,
@@ -101,12 +103,13 @@ impl TransformExt for Transform {
 	}
 }
 
-mod century;
-use century::Century;
+
 
 pub const CARD_WIDTH: f32 = 6.2;
 pub const CARD_HEIGHT: f32 = 10.3;
 
+/// Margin of space between card content and left side of card
+const left_margin: f32 = 0.3;
 const almost_zero: f32 = 0.01;
 
 /// Constructs a card from component [CardVisual] parts and
@@ -141,7 +144,7 @@ fn construct_card_from_visual(
 	});
 	parent.name("Card (parent)");
 
-	const left_margin: f32 = 0.3;
+	
 
 	/* #region top row */
 	/// Margin of top row from the top of the card
@@ -166,132 +169,7 @@ fn construct_card_from_visual(
 
 				// spawn agenda cost
 				if let Some(agenda_cost) = visual.activation_cost {
-					let x = -(CARD_WIDTH / 2.0) + agenda_cost.width() / 2.0 + left_margin;
-					let transform = Transform::from_translation(x * Vec3::X);
-					parent
-						.spawn(PbrBundle {
-							transform,
-							..default()
-						})
-						.name("Activation cost parent")
-						.with_children(|activation_cost| {
-							// cost frame
-							let cost_frame_shape =
-								shape::Quad::new(Vec2::new(agenda_cost.width(), AgendaCost::height));
-							let material = texture_2d(ass.load(agenda_cost.get_frame_asset_path()));
-							let mut cost_frame = activation_cost.spawn(PbrBundle {
-								mesh: meshs.add(cost_frame_shape.into()),
-								material: mat.add(material),
-								..default()
-							});
-							cost_frame.name("Cost frame");
-							// end cost frame
-
-							// agenda icons & numbers
-							cost_frame.with_children(|cost_frame| {
-								let mesh = shape::Quad::new(Vec2::new(AgendaType::width, AgendaType::height));
-								let mesh = meshs.add(mesh.into());
-								const number_size: f32 = 0.2;
-
-								match &agenda_cost {
-									AgendaCost::One { only } => {
-										// icon
-										let material = texture_2d(ass.load(only.agenda.get_icon_asset_path()));
-										// -0.05 is a slight offset, magic number
-										let transform = Transform::from_xyz(0.0 - 0.05, -0.05, almost_zero);
-
-										cost_frame
-											.spawn(PbrBundle {
-												transform,
-												material: mat.add(material),
-												mesh,
-												..default()
-											})
-											.name("Only agenda");
-
-										// number
-										let (mesh, offset) = get_text_mesh(&only.number.to_string(), number_size);
-										let top_right_transform = Transform::from_xyz(
-											cost_frame_shape.size.x / 2. - number_size / 2.,
-											cost_frame_shape.size.y / 2. - number_size / 2.,
-											almost_zero,
-										);
-										cost_frame
-											.spawn(PbrBundle {
-												transform: top_right_transform.translate(offset),
-												mesh: meshs.add(mesh),
-												material: mat.add(Color::WHITE.into()),
-												..default()
-											})
-											.name("Number for only agenda");
-									}
-									AgendaCost::Two { first, second } => {
-										// first
-										let material = texture_2d(ass.load(first.agenda.get_icon_asset_path()));
-										// -0.05 is a slight offset, magic number
-										let transform =
-											Transform::from_xyz(-agenda_cost.width() / 4. - 0.05, -0.05, almost_zero);
-
-										cost_frame
-											.spawn(PbrBundle {
-												transform,
-												material: mat.add(material),
-												mesh: mesh.clone(),
-												..default()
-											})
-											.name("First agenda");
-
-										// first number
-										let (t_mesh, offset) = get_text_mesh(&second.number.to_string(), number_size);
-										let top_right_transform = Transform::from_xyz(
-											-number_size / 2.,
-											cost_frame_shape.size.y / 2. - number_size / 2.,
-											almost_zero,
-										);
-										cost_frame
-											.spawn(PbrBundle {
-												transform: top_right_transform.translate(offset),
-												mesh: meshs.add(t_mesh),
-												material: mat.add(Color::WHITE.into()),
-												..default()
-											})
-											.name("Number for only agenda");
-
-										// second
-										let material = texture_2d(ass.load(second.agenda.get_icon_asset_path()));
-										// -0.05 is a slight offset, magic number
-										let transform =
-											Transform::from_xyz(agenda_cost.width() / 4. - 0.05, 0.0 - 0.05, almost_zero);
-
-										cost_frame
-											.spawn(PbrBundle {
-												transform,
-												material: mat.add(material),
-												mesh,
-												..default()
-											})
-											.name("Second agenda");
-
-										// second number
-										let (mesh, offset) = get_text_mesh(&second.number.to_string(), number_size);
-										let top_right_transform = Transform::from_xyz(
-											cost_frame_shape.size.x / 2. - number_size / 2.,
-											cost_frame_shape.size.y / 2. - number_size / 2.,
-											almost_zero,
-										);
-										cost_frame
-											.spawn(PbrBundle {
-												transform: top_right_transform.translate(offset),
-												mesh: meshs.add(mesh),
-												material: mat.add(Color::WHITE.into()),
-												..default()
-											})
-											.name("Number for only agenda");
-									}
-								}
-							});
-							// end icons & numbers
-						});
+					agenda_cost.spawn_using_entity_commands(parent, (meshs, mat, ass));
 				}
 				// end agenda cost
 			});
