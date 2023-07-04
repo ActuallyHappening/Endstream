@@ -7,10 +7,11 @@ impl SpawnToParent for AgendaCost {
 	fn spawn_using_entity_commands(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
+		translation: Vec3,
 		(meshs, mat, ass): crate::ext::mutASS,
 	) -> Entity {
 		let x = -(CARD_WIDTH / 2.0) + self.width() / 2.0 + left_margin;
-		let transform = Transform::from_translation(x * Vec3::X);
+		let transform = Transform::from_translation(x * Vec3::X).translate(translation);
 		parent
 			.spawn(PbrBundle {
 				transform,

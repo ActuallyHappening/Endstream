@@ -41,6 +41,7 @@ impl SpawnToParent for Century {
 	fn spawn_using_entity_commands(
 		&self,
 		parent: &mut bevy::prelude::ChildBuilder<'_, '_, '_>,
+		translation: Vec3,
 		(meshs, mat, ass): mutASS,
 	) -> Entity {
 		let century_shape = shape::Quad::new(Vec2::new(Century::width, Century::height));
@@ -50,6 +51,7 @@ impl SpawnToParent for Century {
 		let mut century = parent.spawn(PbrBundle {
 			mesh,
 			material,
+			transform: Transform::from_translation(translation),
 			..default()
 		});
 		century.name("Century marker");

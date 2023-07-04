@@ -1,17 +1,18 @@
 #![allow(non_upper_case_globals)]
 
-use std::num::NonZeroU8;
-use crate::ext::{EntityCommandsExt, IntoAssetPath, ASS, SpawnToParent};
+use crate::ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS};
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
 	textmesh::{get_text_mesh, get_text_mesh_with_bbox},
 	texture_2d,
 };
 use bevy::prelude::*;
+use std::num::NonZeroU8;
 
 mod century;
 use century::Century;
 mod agenda;
+mod general_info;
 
 pub enum ControllerCard {
 	Ssv93Ural,
@@ -93,8 +94,6 @@ impl IntoAssetPath for CardVisualBg {
 	}
 }
 
-
-
 pub const CARD_WIDTH: f32 = 6.2;
 pub const CARD_HEIGHT: f32 = 10.3;
 
@@ -134,8 +133,6 @@ fn construct_card_from_visual(
 	});
 	parent.name("Card (parent)");
 
-	
-
 	/* #region top row */
 	/// Margin of top row from the top of the card
 	/// (and margin between bottom of top row and top of artwork)
@@ -153,13 +150,13 @@ fn construct_card_from_visual(
 			.with_children(|parent| {
 				// spawn century icon
 				if let Some(start_century) = visual.start_century {
-					start_century.spawn_using_entity_commands(parent, (meshs, mat, ass));
+					start_century.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
 				}
 				// end spawn century
 
 				// spawn agenda cost
 				if let Some(agenda_cost) = visual.activation_cost {
-					agenda_cost.spawn_using_entity_commands(parent, (meshs, mat, ass));
+					agenda_cost.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
 				}
 				// end agenda cost
 			});
@@ -181,18 +178,11 @@ fn construct_card_from_visual(
 	/* #endregion artwork */
 
 	// #region general info row
-	const general_height: f32 = 0.98;
-	const general_y: f32 = artwork_y - CardVisual::artwork_height / 2. - general_height / 2.;
+
+	const general_y: f32 = artwork_y - CardVisual::artwork_height / 2. - GeneralInfo::height / 2.;
 	parent.with_children(|general_row| {
 		let general = visual.info;
-		const general_text_size: f32 = 0.3;
-		let name_mesh = get_text_mesh_with_bbox(&general.name, general_text_size);
-		// #region names
-		// general_row.spawn(PbrBundle {
-		// 	transform: Transform::from_xyz(-CARD_WIDTH / 2. + left_margin),
-		// 	..default()
-		// }).name("Names row");
-		// #endregion names
+		general.spawn_using_entity_commands(general_row, Vec3::Y * general_y, (meshs, mat, ass));
 	});
 	// #endregion end general info
 
