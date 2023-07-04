@@ -1,9 +1,40 @@
-use super::{almost_zero, left_margin, GeneralInfo, CARD_WIDTH};
+use std::num::NonZeroU8;
+
+use super::{almost_zero, left_margin, CARD_WIDTH};
 use crate::{
 	ext::{EntityCommandsExt, SpawnToParent, TransformExt},
 	textmesh::{get_text_mesh_with_bbox, BoundingBoxExt},
 };
 use bevy::prelude::*;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GeneralInfo {
+	pub name: String,
+	pub aka_name: Option<String>,
+	pub gender: Gender,
+	pub race: ClassRace,
+
+	pub health: NonZeroU8,
+}
+
+/// Gender, including `Gender::Neither`
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Gender {
+	Male,
+	Female,
+
+	Neither,
+}
+todo!(Implement race/class rendering, taking into account Controller + Orbital strike team classes)
+/// Includes `ClassRace::Controller`
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ClassRace {
+	Human,
+	PostHuman,
+
+	Controller,
+}
+
 
 impl GeneralInfo {
 	const names_text_size: f32 = 0.5;
@@ -58,7 +89,7 @@ impl SpawnToParent for GeneralInfo {
 		});
 
 		if let Some(aka_name) = &self.aka_name {
-			parent.with_children(move |parent| {
+			parent.with_children(|parent| {
 				let (aka_mesh, aka_bbox) = get_text_mesh_with_bbox(aka_name, GeneralInfo::names_text_size);
 				let aka_translation = Vec3::new(
 					-CARD_WIDTH / 2. + left_margin + aka_bbox.size().x / 2. + name_bbox.size().x,

@@ -1,5 +1,6 @@
 #![allow(non_upper_case_globals)]
 
+use crate::card::general_info::GeneralInfo;
 use crate::ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS};
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
@@ -11,6 +12,8 @@ use std::num::NonZeroU8;
 
 mod century;
 use century::Century;
+
+use self::general_info::{Gender, ClassRace};
 mod agenda;
 mod general_info;
 
@@ -43,30 +46,6 @@ impl CardVisual {
 	pub const artwork_height: f32 = 5.1;
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct GeneralInfo {
-	name: String,
-	aka_name: Option<String>,
-	gender: Gender,
-	race: Race,
-
-	health: NonZeroU8,
-}
-
-/// Gender, including `Gender::Neither`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Gender {
-	Male,
-	Female,
-
-	Neither,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Race {
-	Human,
-	PostHuman,
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum CardVisualBg {
@@ -208,7 +187,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 				name: "Mori".to_string(),
 				aka_name: Some("The Piercer".to_string()),
 				gender: Gender::Male,
-				race: Race::Human,
+				race: ClassRace::Human,
 				health: NonZeroU8::new(1).unwrap(),
 			},
 		},
