@@ -1,7 +1,7 @@
 use strum::IntoStaticStr;
 use bevy::prelude::*;
 
-use crate::{texture_2d, textmesh::get_text_mesh, ext::{ASS, SpawnToParent, EntityCommandsExt}, card::{TransformExt, almost_zero}};
+use crate::{texture_2d, textmesh::get_text_mesh, ext::{ASS, SpawnToParent, EntityCommandsExt, mutASS}, card::{TransformExt, almost_zero}};
 
 #[derive(IntoStaticStr, Debug, Clone, PartialEq, Eq)]
 pub enum Century {
@@ -41,7 +41,7 @@ impl SpawnToParent for Century {
 	fn spawn_using_entity_commands(
 		&self,
 		parent: &mut bevy::prelude::ChildBuilder<'_, '_, '_>,
-		(meshs, mat, ass): &mut ASS,
+		(meshs, mat, ass): mutASS,
 	) -> Entity {
 		let century_shape = shape::Quad::new(Vec2::new(Century::width, Century::height));
 		let mesh = meshs.add(century_shape.into());

@@ -7,6 +7,11 @@ pub type ASS<'a> = (
 	ResMut<'a, Assets<StandardMaterial>>,
 	ResMut<'a, AssetServer>,
 );
+pub type mutASS<'a, 'b> = (
+	&'b mut ResMut<'a, Assets<Mesh>>,
+	&'b mut ResMut<'a, Assets<StandardMaterial>>,
+	&'b mut ResMut<'a, AssetServer>,
+);
 
 pub trait EntityCommandsExt {
 	fn with_picking(&mut self) -> &mut Self;
@@ -41,8 +46,9 @@ pub trait IntoAssetPath {
 	fn get_asset_path(&self,) -> String;
 }
 
+/// Offset by `Vec3::Z * almost_zero` to avoid z-fighting
 pub trait SpawnToParent {
-	fn spawn_using_entity_commands(&self, parent: &mut ChildBuilder<'_, '_, '_>, ass: &mut ASS) -> Entity;
+	fn spawn_using_entity_commands(&self, parent: &mut ChildBuilder<'_, '_, '_>, ass: mutASS) -> Entity;
 	
 	// fn spawn_using_commands(&self, commands: &mut Commands) -> Entity {
 	// 	commands.spawn_empty().with_children(|parent| {

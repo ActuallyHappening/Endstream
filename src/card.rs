@@ -2,7 +2,7 @@
 
 use std::num::NonZeroU8;
 
-use crate::ext::{EntityCommandsExt, IntoAssetPath, ASS};
+use crate::ext::{EntityCommandsExt, IntoAssetPath, ASS, SpawnToParent};
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
 	textmesh::{get_text_mesh, get_text_mesh_with_bbox},
@@ -119,8 +119,6 @@ fn construct_card_from_visual(
 	commands: &mut Commands,
 	(meshs, mat, ass): &mut ASS,
 ) -> Entity {
-	
-
 	let shape_dimensions = Vec2::new(CARD_WIDTH, CARD_HEIGHT);
 	let shape = shape::Quad::new(shape_dimensions);
 
@@ -161,7 +159,9 @@ fn construct_card_from_visual(
 			.name("Top row")
 			.with_children(|parent| {
 				// spawn century icon
-				if let Some(start_century) = visual.start_century {}
+				if let Some(start_century) = visual.start_century {
+					start_century.spawn_using_entity_commands(parent, (meshs, mat, ass));
+				}
 				// end spawn century
 
 				// spawn agenda cost
