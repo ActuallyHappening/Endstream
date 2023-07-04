@@ -93,16 +93,6 @@ impl IntoAssetPath for CardVisualBg {
 	}
 }
 
-trait TransformExt {
-	fn translate(self, delta: Vec3) -> Self;
-}
-impl TransformExt for Transform {
-	fn translate(mut self, delta: Vec3) -> Self {
-		self.translation += delta;
-		self
-	}
-}
-
 
 
 pub const CARD_WIDTH: f32 = 6.2;

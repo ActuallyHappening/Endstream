@@ -46,6 +46,16 @@ pub trait IntoAssetPath {
 	fn get_asset_path(&self,) -> String;
 }
 
+pub trait TransformExt {
+	fn translate(self, delta: Vec3) -> Self;
+}
+impl TransformExt for Transform {
+	fn translate(mut self, delta: Vec3) -> Self {
+		self.translation += delta;
+		self
+	}
+}
+
 /// Offset by `Vec3::Z * almost_zero` to avoid z-fighting
 pub trait SpawnToParent {
 	fn spawn_using_entity_commands(&self, parent: &mut ChildBuilder<'_, '_, '_>, ass: mutASS) -> Entity;
