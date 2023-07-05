@@ -1,7 +1,7 @@
 use strum::IntoStaticStr;
 use bevy::prelude::*;
 
-use crate::{texture_2d, textmesh::get_text_mesh, ext::{ASS, SpawnToParent, EntityCommandsExt, mutASS, TransformExt}, card::{almost_zero}};
+use crate::{texture_2d, textmesh::{get_text_mesh, Fonts}, ext::{ASS, SpawnToParent, EntityCommandsExt, mutASS, TransformExt}, card::{almost_zero}};
 
 #[derive(IntoStaticStr, Debug, Clone, PartialEq, Eq)]
 pub enum Century {
@@ -59,7 +59,7 @@ impl SpawnToParent for Century {
 		// century text
 		const century_text_size: f32 = 0.4;
 		century.with_children(|century| {
-			let (mesh, offset) = get_text_mesh(self.into_num().to_string(), century_text_size);
+			let (mesh, offset) = get_text_mesh(self.into_num().to_string(), century_text_size, Fonts::Light);
 			century
 				.spawn(PbrBundle {
 					transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),

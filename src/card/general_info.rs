@@ -2,11 +2,13 @@ use std::num::NonZeroU8;
 
 use super::{almost_zero, left_margin, CARD_WIDTH};
 use crate::{
+	card::right_margin,
 	ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, TransformExt},
-	textmesh::{get_text_mesh, get_text_mesh_with_bbox, BoundingBoxExt},
+	textmesh::{get_text_mesh, get_text_mesh_with_bbox, BoundingBoxExt, Fonts},
 	texture_2d,
 };
 use bevy::prelude::*;
+use derive_more::{Constructor, From, Into};
 use strum::{Display, EnumIs, IntoStaticStr};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -16,8 +18,10 @@ pub struct ControllerGeneralInfo {
 	pub gender: Gender,
 	pub race: ClassRace,
 
-	pub health: NonZeroU8,
+	pub health: Health,
 }
+#[derive(Debug, Clone, PartialEq, Eq, Into, From, Deref, DerefMut, Constructor)]
+pub struct Health(Option<NonZeroU8>);
 
 /// Gender, including `Gender::Neither`
 #[derive(Display, Debug, Clone, PartialEq, Eq, EnumIs, IntoStaticStr)]
@@ -82,17 +86,17 @@ impl SpawnToParent for ControllerGeneralInfo {
 		});
 		parent.name("GeneralInfo row (parent)");
 
+		// name
 		let (name_mesh, name_bbox) = get_text_mesh_with_bbox(
 			self.name.to_uppercase(),
 			ControllerGeneralInfo::names_text_size,
+			Fonts::Heavy,
 		);
 		let name_translation = Vec3::new(
 			-CARD_WIDTH / 2. + left_margin + name_bbox.size().x / 2.,
 			ControllerGeneralInfo::upper_row_y,
 			0.,
 		);
-
-		// name
 		parent.with_children(|parent| {
 			let name_transform = Transform::from_translation(Vec3::Z * almost_zero)
 				.translate(name_translation)
@@ -116,7 +120,7 @@ impl SpawnToParent for ControllerGeneralInfo {
 		if let Some(aka_name) = &self.aka_name {
 			parent.with_children(|parent| {
 				let (aka_mesh, aka_bbox) =
-					get_text_mesh_with_bbox(aka_name.clone(), ControllerGeneralInfo::names_text_size);
+					get_text_mesh_with_bbox(aka_name.clone(), ControllerGeneralInfo::names_text_size, Fonts::Light);
 				let aka_translation = Vec3::new(
 					-CARD_WIDTH / 2. + left_margin + aka_bbox.size().x / 2. + name_bbox.size().x,
 					ControllerGeneralInfo::upper_row_y,
@@ -162,6 +166,18 @@ impl SpawnToParent for ControllerGeneralInfo {
 			self
 				.race
 				.spawn_using_entity_commands(parent, class_race_transform, (meshs, mat, ass));
+		});
+
+		// health
+		let health_transform = Vec3::new(
+			CARD_WIDTH / 2. - right_margin - Health::width / 2.,
+			0.,
+			almost_zero,
+		);
+		parent.with_children(|parent| {
+			self
+				.health
+				.spawn_using_entity_commands(parent, health_transform, (meshs, mat, ass));
 		});
 
 		parent.id()
@@ -225,7 +241,7 @@ impl SpawnToParent for ClassRace {
 		translation: Vec3,
 		(meshs, mat, _): crate::ext::mutASS,
 	) -> Entity {
-		let (mesh, offset) = get_text_mesh_with_bbox(format!("{}", self), ClassRace::text_size);
+		let (mesh, offset) = get_text_mesh_with_bbox(format!("{}", self), ClassRace::text_size, Fonts::Heavy);
 		let mut text = parent.spawn(PbrBundle {
 			transform: Transform::from_translation(translation)
 				.translate(offset.get_required_text_offset())
@@ -241,5 +257,57 @@ impl SpawnToParent for ClassRace {
 		});
 		text.name(format!("Race {}", self));
 		text.id()
+	}
+}
+
+impl IntoAssetPath for Health {
+	fn get_asset_path(&self) -> String {
+		"card-icons/health-icon.png".to_string()
+	}
+}
+
+impl Health {
+	pub const width: f32 = 0.6;
+	const height: f32 = 0.7;
+
+	const text_size: f32 = 0.45;
+	const text_colour: Color = Color::WHITE;
+	const text_offset: Vec3 = Vec3::new(-0.1, 0., 0.); 
+}
+
+impl SpawnToParent for Health {
+	fn spawn_using_entity_commands(
+		&self,
+		parent: &mut ChildBuilder<'_, '_, '_>,
+		translation: Vec3,
+		(meshs, mat, ass): crate::ext::mutASS,
+	) -> Entity {
+		let mut defense = parent.spawn(PbrBundle {
+			material: mat.add(texture_2d(ass.load(self.get_asset_path()))),
+			mesh: meshs.add(shape::Quad::new(Vec2::new(Health::width, Health::height)).into()),
+			transform: Transform::from_translation(translation),
+			..default()
+		});
+		defense.name("Defense icon");
+
+		defense.with_children(|defense| {
+			let (mesh, offset);
+			if let Some(health) = self.0 {
+				(mesh, offset) = get_text_mesh(health.to_string(), Health::text_size, Fonts::LucidaGrande);
+			} else {
+				error!("Trying to render a Health component that has no health!");
+				(mesh, offset) = get_text_mesh("0", Health::text_size, Fonts::Heavy);
+			}
+			defense
+				.spawn(PbrBundle {
+					mesh: meshs.add(mesh),
+					transform: Transform::from_translation(offset).translate(Health::text_offset),
+					material: mat.add(Health::text_colour.into()),
+					..default()
+				})
+				.name(format!("Health {:?}", self.0));
+		});
+
+		defense.id()
 	}
 }

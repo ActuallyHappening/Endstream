@@ -13,7 +13,7 @@ use std::num::NonZeroU8;
 mod century;
 use century::Century;
 
-use self::general_info::{Gender, ClassRace, Class, Race};
+use self::general_info::{Gender, ClassRace, Class, Race, Health};
 mod agenda;
 mod general_info;
 
@@ -78,6 +78,8 @@ pub const CARD_HEIGHT: f32 = 10.3;
 
 /// Margin of space between card content and left side of card
 const left_margin: f32 = 0.3;
+/// Not structly true, but makes aesthetically pleasing cards
+const right_margin: f32 = left_margin;
 const almost_zero: f32 = 0.01;
 
 /// Constructs a card from component [CardVisual] parts and
@@ -191,7 +193,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 					class: Class::None,
 					race: Race::Human,
 				},
-				health: NonZeroU8::new(1).unwrap(),
+				health: Health::new(NonZeroU8::new(1)),
 			},
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
