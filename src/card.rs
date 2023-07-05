@@ -1,6 +1,6 @@
 #![allow(non_upper_case_globals)]
 
-use crate::card::general_info::GeneralInfo;
+use crate::card::general_info::ControllerGeneralInfo;
 use crate::ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS};
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
@@ -13,7 +13,7 @@ use std::num::NonZeroU8;
 mod century;
 use century::Century;
 
-use self::general_info::{Gender, ClassRace};
+use self::general_info::{Gender, ClassRace, Class, Race};
 mod agenda;
 mod general_info;
 
@@ -39,7 +39,7 @@ struct CardVisual {
 	/// Path to artwork image texture
 	artwork: String,
 
-	info: GeneralInfo,
+	info: ControllerGeneralInfo,
 }
 
 impl CardVisual {
@@ -158,7 +158,7 @@ fn construct_card_from_visual(
 
 	// #region general info row
 
-	const general_y: f32 = artwork_y - CardVisual::artwork_height / 2. - GeneralInfo::height / 2.;
+	const general_y: f32 = artwork_y - CardVisual::artwork_height / 2. - ControllerGeneralInfo::height / 2.;
 	parent.with_children(|general_row| {
 		let general = visual.info;
 		general.spawn_using_entity_commands(general_row, Vec3::Y * general_y, (meshs, mat, ass));
@@ -183,11 +183,14 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 			)),
 			// activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
 			artwork: String::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
-			info: GeneralInfo {
+			info: ControllerGeneralInfo {
 				name: "Mori".to_string(),
 				aka_name: Some("The Piercer".to_string()),
 				gender: Gender::Male,
-				race: ClassRace::Human,
+				race: ClassRace {
+					class: Class::None,
+					race: Race::Human,
+				},
 				health: NonZeroU8::new(1).unwrap(),
 			},
 		},

@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use bevy::prelude::*;
 use bevy::{ecs::system::EntityCommands};
 use bevy_mod_picking::{backends::rapier::RapierPickTarget, prelude::*};
@@ -18,7 +20,7 @@ pub trait EntityCommandsExt {
 
 	fn as_pick_camera(&mut self) -> &mut Self;
 
-	fn name(&mut self, name: &'static str) -> &mut Self;
+	fn name<T: Into<Cow<'static, str>>>(&mut self, name: T) -> &mut Self;
 }
 
 impl EntityCommandsExt for EntityCommands<'_, '_, '_> {
@@ -37,7 +39,7 @@ impl EntityCommandsExt for EntityCommands<'_, '_, '_> {
 			.insert(RaycastPickCamera::default())
 	}
 
-	fn name(&mut self, name: &'static str) -> &mut Self {
+	fn name<T: Into<Cow<'static, str>>>(&mut self, name: T) -> &mut Self {
 		self.insert(Name::new(name))
 	}
 }
