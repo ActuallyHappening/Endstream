@@ -8,7 +8,7 @@ use crate::{
 	texture_2d,
 };
 use bevy::prelude::*;
-use derive_more::{Constructor, From, Into};
+use derive_more::{Constructor, From, Into, Unwrap};
 use strum::{Display, EnumIs, IntoStaticStr};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -24,7 +24,7 @@ pub struct ControllerGeneralInfo {
 pub struct Health(Option<NonZeroU8>);
 
 /// Gender, including `Gender::Neither`
-#[derive(Display, Debug, Clone, PartialEq, Eq, EnumIs, IntoStaticStr)]
+#[derive(Display, Debug, Clone, PartialEq, Eq, EnumIs, IntoStaticStr, Unwrap)]
 pub enum Gender {
 	Male,
 	Female,
@@ -37,7 +37,7 @@ pub struct ClassRace {
 	pub race: Race,
 }
 
-#[derive(Display, Debug, Clone, PartialEq, Eq, EnumIs)]
+#[derive(Display, Debug, Clone, PartialEq, Eq, EnumIs, Unwrap)]
 pub enum Race {
 	Human,
 
