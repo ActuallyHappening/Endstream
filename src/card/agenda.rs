@@ -53,7 +53,7 @@ impl SpawnToParent for AgendaCost {
 								.name("Only agenda");
 
 							// number
-							let (mesh, offset) = get_text_mesh(&only.number.to_string(), number_size);
+							let (mesh, offset) = get_text_mesh(only.number.to_string(), number_size);
 							let top_right_transform = Transform::from_xyz(
 								cost_frame_shape.size.x / 2. - number_size / 2.,
 								cost_frame_shape.size.y / 2. - number_size / 2.,
@@ -85,7 +85,7 @@ impl SpawnToParent for AgendaCost {
 								.name("First agenda");
 
 							// first number
-							let (t_mesh, offset) = get_text_mesh(&second.number.to_string(), number_size);
+							let (t_mesh, offset) = get_text_mesh(second.number.to_string(), number_size);
 							let top_right_transform = Transform::from_xyz(
 								-number_size / 2.,
 								cost_frame_shape.size.y / 2. - number_size / 2.,
@@ -116,7 +116,7 @@ impl SpawnToParent for AgendaCost {
 								.name("Second agenda");
 
 							// second number
-							let (mesh, offset) = get_text_mesh(&second.number.to_string(), number_size);
+							let (mesh, offset) = get_text_mesh(second.number.to_string(), number_size);
 							let top_right_transform = Transform::from_xyz(
 								cost_frame_shape.size.x / 2. - number_size / 2.,
 								cost_frame_shape.size.y / 2. - number_size / 2.,

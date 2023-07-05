@@ -44,6 +44,8 @@ impl EntityCommandsExt for EntityCommands<'_, '_, '_> {
 	}
 }
 
+/// Clearly demonstrates that this tyipcally enum directly corrolates uniquely to an asset
+/// as can be directly loaded using the [AssetServer].
 pub trait IntoAssetPath {
 	fn get_asset_path(&self,) -> String;
 }

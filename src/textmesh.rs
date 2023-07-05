@@ -1,14 +1,16 @@
+use std::borrow::Cow;
+
 use bevy::prelude::*;
 use meshtext::{MeshGenerator, MeshText, TextSection};
 
 /// Generates text mesh
-pub fn get_text_mesh_with_bbox(text: &str, pixel_size: f32) -> (Mesh, meshtext::BoundingBox) {
+pub fn get_text_mesh_with_bbox(text: impl Into<Cow<'static, str>>, pixel_size: f32) -> (Mesh, meshtext::BoundingBox) {
 	let font_data = include_bytes!("../assets/fonts/Oswald-Light.ttf");
 
 	let mut generator = MeshGenerator::new(font_data);
 	let transform = Mat4::from_scale(Vec3::new(pixel_size, pixel_size, 0.)).to_cols_array();
 	let text_mesh: MeshText = generator
-		.generate_section(text, true, Some(&transform))
+		.generate_section(&text.into(), true, Some(&transform))
 		.unwrap();
 
 	let vertices = text_mesh.vertices;
@@ -35,7 +37,7 @@ impl BoundingBoxExt for meshtext::BoundingBox {
 
 /// Returns mesh + offset (to ensure coordinates start in center of text).
 /// Without taking offset into account, text will be rendered with *top right* corner at center of entity.
-pub fn get_text_mesh(text: &str, pixel_size: f32) -> (Mesh, Vec3) {
+pub fn get_text_mesh(text: impl Into<Cow<'static, str>>, pixel_size: f32) -> (Mesh, Vec3) {
 	let (mesh, bbox) = get_text_mesh_with_bbox(text, pixel_size);
 	(mesh, bbox.get_required_text_offset())
 }

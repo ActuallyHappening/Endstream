@@ -3,7 +3,7 @@ use std::num::NonZeroU8;
 use super::{almost_zero, left_margin, CARD_WIDTH};
 use crate::{
 	ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, TransformExt},
-	textmesh::{get_text_mesh_with_bbox, BoundingBoxExt},
+	textmesh::{get_text_mesh, get_text_mesh_with_bbox, BoundingBoxExt},
 	texture_2d,
 };
 use bevy::prelude::*;
@@ -33,21 +33,25 @@ pub struct ClassRace {
 	pub race: Race,
 }
 
-// todo!(Implement race/class rendering, taking into account Controller + Orbital strike team classes);
-/// Includes `ClassRace::Controller`
-#[derive(Debug, Clone, PartialEq, Eq, EnumIs)]
+#[derive(Display, Debug, Clone, PartialEq, Eq, EnumIs)]
 pub enum Race {
 	Human,
+
+	#[strum(serialize = "Post-human")]
 	PostHuman,
+
 	Drone,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, EnumIs)]
+#[derive(Display, Debug, Clone, PartialEq, Eq, Default, EnumIs)]
 pub enum Class {
 	#[default]
 	None,
 
+	#[strum(serialize = "Unit 707")]
 	Unit707,
+
+	#[strum(serialize = "Orbital Strike Team")]
 	OrbitalStrikeTeam,
 }
 
@@ -79,7 +83,7 @@ impl SpawnToParent for ControllerGeneralInfo {
 		parent.name("GeneralInfo row (parent)");
 
 		let (name_mesh, name_bbox) = get_text_mesh_with_bbox(
-			&self.name.to_uppercase(),
+			self.name.to_uppercase(),
 			ControllerGeneralInfo::names_text_size,
 		);
 		let name_translation = Vec3::new(
@@ -112,7 +116,7 @@ impl SpawnToParent for ControllerGeneralInfo {
 		if let Some(aka_name) = &self.aka_name {
 			parent.with_children(|parent| {
 				let (aka_mesh, aka_bbox) =
-					get_text_mesh_with_bbox(aka_name, ControllerGeneralInfo::names_text_size);
+					get_text_mesh_with_bbox(aka_name.clone(), ControllerGeneralInfo::names_text_size);
 				let aka_translation = Vec3::new(
 					-CARD_WIDTH / 2. + left_margin + aka_bbox.size().x / 2. + name_bbox.size().x,
 					ControllerGeneralInfo::upper_row_y,
@@ -134,14 +138,30 @@ impl SpawnToParent for ControllerGeneralInfo {
 						material: mat.add(material),
 						..default()
 					})
-					.name("Aka name");
+					.name(format!("Aka name: {}", aka_name));
 			});
 		}
 
 		// gender
+		let gender_transform = Vec3::new(
+			-CARD_WIDTH / 2. + left_margin + Gender::width / 2.,
+			ControllerGeneralInfo::lower_row_y,
+			almost_zero,
+		);
 		parent.with_children(|parent| {
-			let gender_transform = Vec3::new(-CARD_WIDTH / 2. + left_margin + Gender::width / 2., ControllerGeneralInfo::lower_row_y, almost_zero);
-			self.gender.spawn_using_entity_commands(parent, gender_transform, (meshs, mat, ass));
+			self
+				.gender
+				.spawn_using_entity_commands(parent, gender_transform, (meshs, mat, ass));
+		});
+
+		const margin: f32 = 0.2;
+
+		// class & race
+		let class_race_transform = gender_transform + Vec3::X * margin;
+		parent.with_children(|parent| {
+			self
+				.race
+				.spawn_using_entity_commands(parent, class_race_transform, (meshs, mat, ass));
 		});
 
 		parent.id()
@@ -179,5 +199,47 @@ impl SpawnToParent for Gender {
 		});
 		icon.name(format!("Gender {}", self));
 		icon.id()
+	}
+}
+
+impl ClassRace {
+	const text_size: f32 = 0.4;
+	const colour: Color = Color::WHITE;
+}
+
+impl std::fmt::Display for ClassRace {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		// append self.race , self.class
+		if !self.class.is_none() {
+			write!(f, "{}, {}", self.race, self.class)
+		} else {
+			write!(f, "{}", self.race)
+		}
+	}
+}
+
+impl SpawnToParent for ClassRace {
+	fn spawn_using_entity_commands(
+		&self,
+		parent: &mut ChildBuilder<'_, '_, '_>,
+		translation: Vec3,
+		(meshs, mat, _): crate::ext::mutASS,
+	) -> Entity {
+		let (mesh, offset) = get_text_mesh_with_bbox(format!("{}", self), ClassRace::text_size);
+		let mut text = parent.spawn(PbrBundle {
+			transform: Transform::from_translation(translation)
+				.translate(offset.get_required_text_offset())
+				.translate(Vec3::X * (offset.size().x / 2.)),
+			mesh: meshs.add(mesh),
+			material: mat.add(StandardMaterial {
+				base_color: ClassRace::colour,
+				alpha_mode: AlphaMode::Blend,
+				unlit: true,
+				..default()
+			}),
+			..default()
+		});
+		text.name(format!("Race {}", self));
+		text.id()
 	}
 }

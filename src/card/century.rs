@@ -59,7 +59,7 @@ impl SpawnToParent for Century {
 		// century text
 		const century_text_size: f32 = 0.4;
 		century.with_children(|century| {
-			let (mesh, offset) = get_text_mesh(&self.into_num().to_string(), century_text_size);
+			let (mesh, offset) = get_text_mesh(self.into_num().to_string(), century_text_size);
 			century
 				.spawn(PbrBundle {
 					transform: Transform::from_translation(offset).translate(Vec3::Z * almost_zero),
