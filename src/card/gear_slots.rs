@@ -43,8 +43,8 @@ impl IntoAssetPath for GearType {
 }
 
 impl GearType {
-	const width: f32 = 0.1;
-	const height: f32 = 0.1;
+	const width: f32 = 0.35;
+	const height: f32 = 0.41;
 }
 
 impl SpawnToParent for GearType {
@@ -66,7 +66,7 @@ impl SpawnToParent for GearType {
 }
 
 impl GearSlots {
-	const margin: f32 = 0.05;
+	const margin: f32 = 0.1;
 	pub const width: f32 = GearType::width * 2.0 + GearSlots::margin;
 }
 
