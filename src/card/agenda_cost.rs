@@ -2,6 +2,7 @@ use crate::{
 	agendas::{AgendaCost, AgendaType},
 	card::almost_zero,
 	ext::{EntityCommandsExt, SpawnToParent, TransformExt},
+	level_1_depth_bias,
 	textmesh::{get_text_mesh, Fonts},
 	texture_2d,
 };
@@ -45,7 +46,10 @@ impl SpawnToParent for AgendaCost {
 					match &self {
 						AgendaCost::One { only } => {
 							// icon
-							let material = texture_2d(ass.load(only.agenda.get_icon_asset_path()));
+							let material = StandardMaterial {
+								depth_bias: level_1_depth_bias,
+								..texture_2d(ass.load(only.agenda.get_icon_asset_path()))
+							};
 							// -0.05 is a slight offset, magic number
 							let transform = Transform::from_xyz(0.0 - 0.05, -0.05, almost_zero);
 
@@ -77,7 +81,10 @@ impl SpawnToParent for AgendaCost {
 						}
 						AgendaCost::Two { first, second } => {
 							// first
-							let material = texture_2d(ass.load(first.agenda.get_icon_asset_path()));
+							let material = StandardMaterial {
+								depth_bias: level_1_depth_bias,
+								..texture_2d(ass.load(first.agenda.get_icon_asset_path()))
+							};
 							// -0.05 is a slight offset, magic number
 							let transform = Transform::from_xyz(-self.width() / 4. - 0.05, -0.05, almost_zero);
 
@@ -108,7 +115,10 @@ impl SpawnToParent for AgendaCost {
 								.name("Number for only agenda");
 
 							// second
-							let material = texture_2d(ass.load(second.agenda.get_icon_asset_path()));
+							let material = StandardMaterial {
+								depth_bias: level_1_depth_bias,
+								..texture_2d(ass.load(second.agenda.get_icon_asset_path()))
+							};
 							// -0.05 is a slight offset, magic number
 							let transform =
 								Transform::from_xyz(self.width() / 4. - 0.05, 0.0 - 0.05, almost_zero);

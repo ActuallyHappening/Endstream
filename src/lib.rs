@@ -36,6 +36,7 @@ fn texture_2d(texture_handle: Handle<Image>) -> StandardMaterial {
 	}
 }
 const level_0_depth_bias: f32 = 0.;
+/// Used in card/agenda_cost.rs to avoid Z-fighting
 const level_1_depth_bias: f32 = 1.0;
 
 const CAMERA_POS: Vec3 = Vec3::new(5., 20., 1.);

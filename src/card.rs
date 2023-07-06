@@ -88,7 +88,7 @@ pub const CARD_HEIGHT: f32 = 10.3;
 const left_margin: f32 = 0.3;
 /// Not structly true, but makes aesthetically pleasing cards
 const right_margin: f32 = left_margin;
-const almost_zero: f32 = 0.1;
+const almost_zero: f32 = 0.01;
 
 /// Constructs a card from component [CardVisual] parts and
 /// returns entity id.
