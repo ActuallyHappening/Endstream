@@ -14,10 +14,12 @@ mod century;
 use century::Century;
 
 use self::flavour_text::FlavourText;
+use self::gear_slots::{GearSlots, GearType};
 use self::general_info::{Class, ClassRace, Gender, Health, Race};
 mod agenda;
 mod flavour_text;
 mod general_info;
+mod gear_slots;
 
 pub enum ControllerCard {
 	Ssv93Ural,
@@ -36,8 +38,11 @@ impl IntoAssetPath for ControllerCard {
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct CardVisual {
 	bg: CardVisualBg,
+
 	start_century: Option<Century>,
 	activation_cost: Option<AgendaCost>,
+	gear_slots: GearSlots,
+
 	/// Path to artwork image texture
 	artwork: String,
 
@@ -143,6 +148,11 @@ fn construct_card_from_visual(
 					agenda_cost.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
 				}
 				// end agenda cost
+
+				/* #region gear slots */
+				const gear_slots_x: f32 = CARD_WIDTH / 2. - right_margin - GearSlots::width / 2.;
+				visual.gear_slots.spawn_using_entity_commands(parent, Vec3::X * gear_slots_x, (meshs, mat, ass));
+				/* #endregion */
 			});
 	});
 	/* #endregion top row */
@@ -201,6 +211,8 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 				),
 				(3, SingleAgendaType::Science.into()),
 			)),
+			gear_slots: GearSlots::new(GearType::Weapon, GearType::Relic),
+
 			// activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
 			artwork: String::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
 			info: ControllerGeneralInfo {

@@ -53,7 +53,7 @@ impl SpawnToParent for FlavourText {
 		(meshs, mat, _): crate::ext::mutASS,
 	) -> Entity {
 		let mut parent = parent.spawn(PbrBundle {
-			transform: Transform::from_translation(translation),
+			transform: Transform::from_translation(translation).translate(Vec3::Z * almost_zero),
 			..default()
 		});
 		parent.name("FlavourText parent");
@@ -66,7 +66,6 @@ impl SpawnToParent for FlavourText {
 				.spawn(PbrBundle {
 					mesh: meshs.add(mesh),
 					transform: Transform::from_translation(offset)
-						.translate(Vec3::Z * almost_zero)
 						.translate(
 							Vec3::Y * {
 								if self.second.is_some() {
@@ -91,7 +90,6 @@ impl SpawnToParent for FlavourText {
 					.spawn(PbrBundle {
 						mesh: meshs.add(mesh),
 						transform: Transform::from_translation(offset)
-							.translate(Vec3::Z * almost_zero)
 							.translate(Vec3::Y * FlavourText::second_y),
 						material: mat,
 						..default()
