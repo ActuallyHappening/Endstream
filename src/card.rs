@@ -13,8 +13,10 @@ use std::num::NonZeroU8;
 mod century;
 use century::Century;
 
-use self::general_info::{Gender, ClassRace, Class, Race, Health};
+use self::flavour_text::FlavourText;
+use self::general_info::{Class, ClassRace, Gender, Health, Race};
 mod agenda;
+mod flavour_text;
 mod general_info;
 
 pub enum ControllerCard {
@@ -40,12 +42,13 @@ struct CardVisual {
 	artwork: String,
 
 	info: ControllerGeneralInfo,
+
+	flavour_text: FlavourText,
 }
 
 impl CardVisual {
 	pub const artwork_height: f32 = 5.1;
 }
-
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum CardVisualBg {
@@ -158,14 +161,29 @@ fn construct_card_from_visual(
 	});
 	/* #endregion artwork */
 
-	// #region general info row
-
-	const general_y: f32 = artwork_y - CardVisual::artwork_height / 2. - ControllerGeneralInfo::height / 2.;
+	/* #region general info */
+	const general_y: f32 =
+		artwork_y - CardVisual::artwork_height / 2. - ControllerGeneralInfo::height / 2.;
 	parent.with_children(|general_row| {
 		let general = visual.info;
 		general.spawn_using_entity_commands(general_row, Vec3::Y * general_y, (meshs, mat, ass));
 	});
-	// #endregion end general info
+	/* #endregion general info */
+
+	/* #region abilities */
+
+	/* #endregion abilities */
+
+	/* #region flavour text */
+	const flavour_y: f32 = CARD_HEIGHT / -2. + FlavourText::margin_from_bottom;
+	parent.with_children(|flavour_text| {
+		visual.flavour_text.spawn_using_entity_commands(
+			flavour_text,
+			Vec3::Y * flavour_y,
+			(meshs, mat, ass),
+		);
+	});
+	/* #endregion flavour text */
 
 	parent.id()
 }
@@ -195,6 +213,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 				},
 				health: Health::new(NonZeroU8::new(1)),
 			},
+			flavour_text: FlavourText::new("I live by a code. The code says nothing about time travel."),
 		},
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
 		&mut commands,

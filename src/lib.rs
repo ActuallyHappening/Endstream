@@ -1,5 +1,5 @@
 use bevy_fly_camera::FlyCamera;
-use bevy_rapier3d::prelude::*;
+// use bevy_rapier3d::prelude::*;
 use card::spawn_all_cards_debug;
 use bevy::prelude::*;
 
@@ -83,6 +83,6 @@ fn setup(
 			// RaycastPickTarget::default(), // Marker for the `bevy_picking_raycast` backend
 			// OnPointer::<Click>::run_callback(handle_plane_clicked),
 		))
-		.insert(Collider::cuboid(100.0, DIF, 100.0))
+		// .insert(Collider::cuboid(100.0, DIF, 100.0))
 		.name("Ground");
 }
