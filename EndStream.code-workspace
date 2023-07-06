@@ -3,6 +3,9 @@
 		{
 			"path": "."
 		},
+		{
+			"path": "../bevy"
+		}
 	],
 	"settings": {
 		"cSpell.words": [
