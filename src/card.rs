@@ -1,11 +1,8 @@
 #![allow(non_upper_case_globals)]
 
+use crate::agendas::{AgendaCost, SingleAgendaType};
 use crate::card::general_info::ControllerGeneralInfo;
-use crate::utils::{EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS, texture_2d};
-use crate::{
-	agendas::{AgendaCost, AgendaType, SingleAgendaType},
-	textmesh::{get_text_mesh, get_text_mesh_with_bbox},
-};
+use crate::utils::{texture_2d, EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS};
 use bevy::prelude::*;
 use std::num::NonZeroU8;
 
@@ -24,23 +21,9 @@ mod flavour_text;
 mod gear_slots;
 mod general_info;
 
-pub enum ControllerCard {
-	Ssv93Ural,
-}
-
-impl IntoAssetPath for ControllerCard {
-	fn get_asset_path(&self) -> String {
-		match self {
-			// ControllerCard::Ssv93Ural => "cards/Controller - SSV-93 URAL.png",
-			ControllerCard::Ssv93Ural => "cards/Operator - Mori.png",
-		}
-		.into()
-	}
-}
-
 /// Follows style of card and contains all the information necessary to draw any type of card to the screen.
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct CardVisual {
+pub struct CardVisual {
 	bg: CardVisualBg,
 	back: Back,
 
@@ -67,7 +50,7 @@ pub const CARD_HEIGHT: f32 = 10.3;
 
 /// Margin of space between card content and left side of card
 const left_margin: f32 = 0.3;
-/// Not structly true, but makes aesthetically pleasing cards
+/// Margin of space between card content and right side of card
 const right_margin: f32 = left_margin;
 /// To avoid Z-fighting (some depth_bias is still necessary)
 const almost_zero: f32 = 0.01;
@@ -99,7 +82,9 @@ fn construct_card_from_visual(
 
 	/* #region back */
 	parent.with_children(|parent| {
-		visual.back.spawn_using_entity_commands(parent, Vec3::Z * -almost_zero, (meshs, mat, ass));
+		visual
+			.back
+			.spawn_using_entity_commands(parent, Vec3::Z * -almost_zero, (meshs, mat, ass));
 	});
 	/* #endregion */
 
@@ -186,32 +171,33 @@ fn construct_card_from_visual(
 pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 	// spawn_card_cheating(&mut commands, &mut ass);
 	let debug_card = CardVisual {
-			bg: CardVisualBg::Blackish,
-			back: Back::Dotty,
-			start_century: Some(Century::S2100),
-			activation_cost: Some(AgendaCost::new_double(
-				(
-					2,
-					(SingleAgendaType::Military, SingleAgendaType::Wild).into(),
-				),
-				(3, SingleAgendaType::Science.into()),
-			)),
-			gear_slots: GearSlots::new(GearType::Weapon, GearType::Relic),
+		bg: CardVisualBg::Blackish,
+		back: Back::Dotty,
+		start_century: Some(Century::S2100),
+		activation_cost: Some(AgendaCost::new_double(
+			(
+				2,
+				(SingleAgendaType::Military, SingleAgendaType::Wild).into(),
+			),
+			(3, SingleAgendaType::Science.into()),
+		)),
+		gear_slots: GearSlots::new(GearType::Weapon, GearType::Relic),
 
-			// activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
-			artwork: String::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
-			info: ControllerGeneralInfo {
-				name: "Mori".to_string(),
-				aka_name: Some("The Piercer".to_string()),
-				gender: Gender::Male,
-				race: ClassRace {
-					class: Class::None,
-					race: Race::Human,
-				},
-				health: Health::new(NonZeroU8::new(1)),
+		// activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
+		artwork: String::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
+		info: ControllerGeneralInfo {
+			name: "Mori".to_string(),
+			aka_name: Some("The Piercer".to_string()),
+			gender: Gender::Male,
+			race: ClassRace {
+				class: Class::None,
+				race: Race::Human,
 			},
-			flavour_text: FlavourText::new("I live by a code. The code says nothing about time travel.").unwrap(),
-		};
+			health: Health::new(NonZeroU8::new(1)),
+		},
+		flavour_text: FlavourText::new("I live by a code. The code says nothing about time travel.")
+			.unwrap(),
+	};
 	construct_card_from_visual(
 		debug_card.clone(),
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
@@ -226,7 +212,22 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 	);
 }
 
+#[allow(dead_code)]
 fn spawn_card_cheating(commands: &mut Commands, (meshs, mat, ass): &mut ASS) {
+	enum ControllerCard {
+		Ssv93Ural,
+	}
+
+	impl IntoAssetPath for ControllerCard {
+		fn get_asset_path(&self) -> String {
+			match self {
+				// ControllerCard::Ssv93Ural => "cards/Controller - SSV-93 URAL.png",
+				ControllerCard::Ssv93Ural => "cards/Operator - Mori.png",
+			}
+			.into()
+		}
+	}
+
 	let mesh = meshs.add(shape::Box::new(CARD_WIDTH, 0.1, CARD_HEIGHT).into());
 	let material = mat.add(StandardMaterial {
 		base_color_texture: Some(ass.load(ControllerCard::Ssv93Ural.get_asset_path())),

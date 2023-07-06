@@ -6,6 +6,7 @@ use bevy_mod_picking::{backends::rapier::RapierPickTarget, prelude::*};
 
 use crate::level_0_depth_bias;
 
+#[allow(clippy::upper_case_acronyms)]
 pub type ASS<'a> = (
 	ResMut<'a, Assets<Mesh>>,
 	ResMut<'a, Assets<StandardMaterial>>,
