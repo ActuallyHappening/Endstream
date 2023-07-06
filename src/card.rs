@@ -13,6 +13,7 @@ use std::num::NonZeroU8;
 mod century;
 use century::Century;
 
+use self::background::CardVisualBg;
 use self::flavour_text::FlavourText;
 use self::gear_slots::{GearSlots, GearType};
 use self::general_info::{Class, ClassRace, Gender, Health, Race};
@@ -20,6 +21,8 @@ mod agenda_cost;
 mod flavour_text;
 mod general_info;
 mod gear_slots;
+mod background;
+mod back;
 
 pub enum ControllerCard {
 	Ssv93Ural,
@@ -35,6 +38,7 @@ impl IntoAssetPath for ControllerCard {
 	}
 }
 
+/// Follows style of card and contains all the information necessary to draw any type of card to the screen.
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct CardVisual {
 	bg: CardVisualBg,
@@ -53,32 +57,8 @@ struct CardVisual {
 
 impl CardVisual {
 	pub const artwork_height: f32 = 5.1;
-}
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum CardVisualBg {
-	Yellowish,
-	Blackish,
-}
-
-impl CardVisualBg {
-	fn colour_factor(&self) -> Color {
-		match self {
-			CardVisualBg::Blackish => Color::WHITE * 0.58,
-			CardVisualBg::Yellowish => Color::WHITE * 0.58,
-			// CardVisualBg::Yellowish => Color::BLACK,
-		}
-	}
-}
-
-impl IntoAssetPath for CardVisualBg {
-	fn get_asset_path(&self) -> String {
-		match self {
-			CardVisualBg::Blackish => "cards/Black Card Background.png",
-			CardVisualBg::Yellowish => "cards/Yellow Card Background.png",
-		}
-		.into()
-	}
+	const dimensions: Vec2 = Vec2::new(CARD_WIDTH, CARD_HEIGHT);
 }
 
 pub const CARD_WIDTH: f32 = 6.2;
@@ -88,6 +68,7 @@ pub const CARD_HEIGHT: f32 = 10.3;
 const left_margin: f32 = 0.3;
 /// Not structly true, but makes aesthetically pleasing cards
 const right_margin: f32 = left_margin;
+/// To avoid Z-fighting (some depth_bias is still necessary)
 const almost_zero: f32 = 0.01;
 
 /// Constructs a card from component [CardVisual] parts and
@@ -100,24 +81,24 @@ fn construct_card_from_visual(
 	commands: &mut Commands,
 	(meshs, mat, ass): &mut ASS,
 ) -> Entity {
-	let shape_dimensions = Vec2::new(CARD_WIDTH, CARD_HEIGHT);
-	let shape = shape::Quad::new(shape_dimensions);
-
-	// spawn background / parent mesh
-	let mesh = meshs.add(shape.into());
-	let material = mat.add(StandardMaterial {
-		alpha_mode: AlphaMode::Opaque,
-		..texture_2d(ass.load(visual.bg.get_asset_path()))
-	});
+	let card_shape = shape::Quad::new(CardVisual::dimensions);
 
 	position.rotate_x(-90f32.to_radians());
 	let mut parent = commands.spawn(PbrBundle {
-		mesh,
-		material,
 		transform: position,
 		..default()
 	});
 	parent.name("Card (parent)");
+	
+	/* #region front background */
+	parent.with_children(|parent| {
+		visual.bg.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
+	});
+	/* #endregion */
+
+	/* #region back */
+
+	/* #endregion */
 
 	/* #region top row */
 	/// Margin of top row from the top of the card
