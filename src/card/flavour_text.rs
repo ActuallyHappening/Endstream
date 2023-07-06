@@ -16,22 +16,25 @@ pub struct FlavourText {
 }
 
 impl FlavourText {
-	pub fn new(str: impl Into<Cow<'static, str>>) -> FlavourText {
+	pub fn new(str: impl Into<Cow<'static, str>>) -> Result<FlavourText, anyhow::Error> {
 		let str = str.into();
 		let str = str.trim().to_uppercase();
 
 		const char_limit: usize = 60;
 		// split string after X characters, and put second half in second
-		if str.len() > char_limit {
-			FlavourText {
-				first: str[..char_limit].to_string(),
-				second: Some(str[char_limit..].to_string()),
-			}
-		} else {
-			FlavourText {
-				first: str,
+		let lines = textwrap::wrap(&str, char_limit);
+		if lines.len() == 1 {
+			Ok(FlavourText {
+				first: lines[0].to_string(),
 				second: None,
-			}
+			})
+		} else if lines.len() == 2 {
+			Ok(FlavourText {
+				first: lines[0].to_string(),
+				second: Some(lines[1].to_string()),
+			})
+		} else {
+			anyhow::bail!("Flavour text is too long. Max length is 2 lines, got {}: {lines:?}", lines.len());
 		}
 	}
 }
@@ -41,8 +44,8 @@ impl FlavourText {
 	const colour: Color = Color::rgb(0.8, 0.8, 0.8);
 
 	pub const margin_from_bottom: f32 = 0.3;
-	const first_y: f32 = 0.15;
-	const second_y: f32 = -0.15;
+	const first_y: f32 = 0.15 + 0.1;
+	const second_y: f32 = -0.15 + 0.1;
 }
 
 impl SpawnToParent for FlavourText {

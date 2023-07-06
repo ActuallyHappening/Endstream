@@ -13,16 +13,17 @@ use std::num::NonZeroU8;
 mod century;
 use century::Century;
 
+use self::back::Back;
 use self::background::CardVisualBg;
 use self::flavour_text::FlavourText;
 use self::gear_slots::{GearSlots, GearType};
 use self::general_info::{Class, ClassRace, Gender, Health, Race};
 mod agenda_cost;
-mod flavour_text;
-mod general_info;
-mod gear_slots;
-mod background;
 mod back;
+mod background;
+mod flavour_text;
+mod gear_slots;
+mod general_info;
 
 pub enum ControllerCard {
 	Ssv93Ural,
@@ -42,6 +43,7 @@ impl IntoAssetPath for ControllerCard {
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct CardVisual {
 	bg: CardVisualBg,
+	back: Back,
 
 	start_century: Option<Century>,
 	activation_cost: Option<AgendaCost>,
@@ -81,18 +83,18 @@ fn construct_card_from_visual(
 	commands: &mut Commands,
 	(meshs, mat, ass): &mut ASS,
 ) -> Entity {
-	let card_shape = shape::Quad::new(CardVisual::dimensions);
-
 	position.rotate_x(-90f32.to_radians());
 	let mut parent = commands.spawn(PbrBundle {
 		transform: position,
 		..default()
 	});
 	parent.name("Card (parent)");
-	
+
 	/* #region front background */
 	parent.with_children(|parent| {
-		visual.bg.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
+		visual
+			.bg
+			.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
 	});
 	/* #endregion */
 
@@ -129,7 +131,11 @@ fn construct_card_from_visual(
 
 				/* #region gear slots */
 				const gear_slots_x: f32 = CARD_WIDTH / 2. - right_margin - GearSlots::width / 2.;
-				visual.gear_slots.spawn_using_entity_commands(parent, Vec3::X * gear_slots_x, (meshs, mat, ass));
+				visual.gear_slots.spawn_using_entity_commands(
+					parent,
+					Vec3::X * gear_slots_x,
+					(meshs, mat, ass),
+				);
 				/* #endregion */
 			});
 	});
@@ -177,10 +183,10 @@ fn construct_card_from_visual(
 }
 
 pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
-	spawn_card_cheating(&mut commands, &mut ass);
-	construct_card_from_visual(
-		CardVisual {
+	// spawn_card_cheating(&mut commands, &mut ass);
+	let debug_card = CardVisual {
 			bg: CardVisualBg::Blackish,
+			back: Back::Dotty,
 			start_century: Some(Century::S2100),
 			activation_cost: Some(AgendaCost::new_double(
 				(
@@ -203,9 +209,17 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 				},
 				health: Health::new(NonZeroU8::new(1)),
 			},
-			flavour_text: FlavourText::new("I live by a code. The code says nothing about time travel."),
-		},
+			flavour_text: FlavourText::new("I live by a code. The code says nothing about time travel.").unwrap(),
+		};
+	construct_card_from_visual(
+		debug_card.clone(),
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),
+		&mut commands,
+		&mut ass,
+	);
+	construct_card_from_visual(
+		debug_card,
+		Transform::from_xyz(0., 5., 0.).with_rotation(Quat::from_rotation_y(160f32.to_radians())),
 		&mut commands,
 		&mut ass,
 	);

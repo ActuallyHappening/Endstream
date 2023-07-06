@@ -9,6 +9,9 @@ edition = "2021"
 default = ["dev"]
 dev = ["bevy/dynamic_linking"]
 
+# [lib]
+# crate-type = ["cdylib", "rlib"]
+
 [profile.dev]
 opt-level = 1
 [profile.dev.package."*"]
@@ -20,6 +23,7 @@ opt-level = 3
 # codegen-units = 1
 
 [dependencies]
+anyhow = "1.0.71"
 bevy_editor_pls = "0.4.0"
 bevy_egui = "0.20.3"
 bevy_fly_camera = "0.10.0"
@@ -30,6 +34,7 @@ meshtext = "0.3.0"
 rand = "0.8.5"
 serde = { version = "1.0.163", features = ["derive"] }
 strum = { version = "0.25.0", features = ["derive"] }
+textwrap = "0.16.0"
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.17", features = ["time"] }
 
