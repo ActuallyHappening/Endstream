@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{ext::{IntoAssetPath, SpawnToParent, EntityCommandsExt}, texture_2d};
+use crate::{utils::{IntoAssetPath, SpawnToParent, EntityCommandsExt}, utils::texture_2d};
 
 use super::CardVisual;
 
@@ -29,7 +29,7 @@ impl SpawnToParent for CardVisualBg {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, ass): crate::ext::mutASS,
+		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
 		let card_shape = shape::Quad::new(CardVisualBg::dimensions);
 

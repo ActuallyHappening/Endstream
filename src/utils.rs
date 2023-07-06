@@ -1,19 +1,33 @@
 use std::borrow::Cow;
 
 use bevy::prelude::*;
-use bevy::{ecs::system::EntityCommands};
+use bevy::ecs::system::EntityCommands;
 use bevy_mod_picking::{backends::rapier::RapierPickTarget, prelude::*};
+
+use crate::level_0_depth_bias;
 
 pub type ASS<'a> = (
 	ResMut<'a, Assets<Mesh>>,
 	ResMut<'a, Assets<StandardMaterial>>,
 	ResMut<'a, AssetServer>,
 );
+#[allow(non_camel_case_types)]
 pub type mutASS<'a, 'b> = (
 	&'b mut ResMut<'a, Assets<Mesh>>,
 	&'b mut ResMut<'a, Assets<StandardMaterial>>,
 	&'b mut ResMut<'a, AssetServer>,
 );
+
+pub fn texture_2d(texture_handle: Handle<Image>) -> StandardMaterial {
+	StandardMaterial {
+		base_color_texture: Some(texture_handle),
+		unlit: true,
+		alpha_mode: AlphaMode::Blend,
+		cull_mode: None,
+		depth_bias: level_0_depth_bias,
+		..default()
+	}
+}
 
 pub trait EntityCommandsExt {
 	fn with_picking(&mut self) -> &mut Self;

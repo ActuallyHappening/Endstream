@@ -1,7 +1,7 @@
 use super::CardVisual;
 use crate::{
-	ext::{IntoAssetPath, SpawnToParent, EntityCommandsExt},
-	texture_2d,
+	utils::{IntoAssetPath, SpawnToParent, EntityCommandsExt},
+	utils::texture_2d,
 };
 use bevy::prelude::*;
 
@@ -30,7 +30,7 @@ impl SpawnToParent for Back {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, ass): crate::ext::mutASS,
+		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
 		let mut back = parent.spawn(PbrBundle {
 			transform: Transform::from_translation(translation),

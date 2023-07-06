@@ -3,9 +3,9 @@ use std::num::NonZeroU8;
 use super::{almost_zero, left_margin, CARD_WIDTH};
 use crate::{
 	card::right_margin,
-	ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, TransformExt},
+	utils::{EntityCommandsExt, IntoAssetPath, SpawnToParent, TransformExt},
 	textmesh::{get_text_mesh, get_text_mesh_with_bbox, BoundingBoxExt, Fonts},
-	texture_2d,
+	utils::texture_2d,
 };
 use bevy::prelude::*;
 use derive_more::{Constructor, From, Into, Unwrap};
@@ -78,7 +78,7 @@ impl SpawnToParent for ControllerGeneralInfo {
 		&self,
 		parent: &mut bevy::prelude::ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, ass): crate::ext::mutASS,
+		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
 		let mut parent = parent.spawn(PbrBundle {
 			transform: Transform::from_translation(translation),
@@ -205,7 +205,7 @@ impl SpawnToParent for Gender {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, ass): crate::ext::mutASS,
+		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
 		let mut icon = parent.spawn(PbrBundle {
 			transform: Transform::from_translation(translation),
@@ -239,7 +239,7 @@ impl SpawnToParent for ClassRace {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, _): crate::ext::mutASS,
+		(meshs, mat, _): crate::utils::mutASS,
 	) -> Entity {
 		let (mesh, offset) = get_text_mesh_with_bbox(format!("{}", self), ClassRace::text_size, Fonts::Heavy);
 		let mut text = parent.spawn(PbrBundle {
@@ -280,7 +280,7 @@ impl SpawnToParent for Health {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, ass): crate::ext::mutASS,
+		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
 		let mut defense = parent.spawn(PbrBundle {
 			material: mat.add(texture_2d(ass.load(self.get_asset_path()))),

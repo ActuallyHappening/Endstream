@@ -1,11 +1,10 @@
 #![allow(non_upper_case_globals)]
 
 use crate::card::general_info::ControllerGeneralInfo;
-use crate::ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS};
+use crate::utils::{EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS, texture_2d};
 use crate::{
 	agendas::{AgendaCost, AgendaType, SingleAgendaType},
 	textmesh::{get_text_mesh, get_text_mesh_with_bbox},
-	texture_2d,
 };
 use bevy::prelude::*;
 use std::num::NonZeroU8;

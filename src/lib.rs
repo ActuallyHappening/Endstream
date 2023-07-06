@@ -1,16 +1,14 @@
 #![allow(non_upper_case_globals)]
 
-use bevy_fly_camera::FlyCamera;
-// use bevy_rapier3d::prelude::*;
 use card::spawn_all_cards_debug;
 use bevy::prelude::*;
 
-use crate::ext::EntityCommandsExt;
+use crate::utils::EntityCommandsExt;
 
 mod card;
 mod agendas;
 mod textmesh;
-mod ext;
+mod utils;
 
 
 pub struct MainPlugin;
@@ -24,16 +22,7 @@ impl Plugin for MainPlugin {
 	}
 }
 
-fn texture_2d(texture_handle: Handle<Image>) -> StandardMaterial {
-	StandardMaterial {
-		base_color_texture: Some(texture_handle),
-		unlit: true,
-		alpha_mode: AlphaMode::Blend,
-		cull_mode: None,
-		depth_bias: level_0_depth_bias,
-		..default()
-	}
-}
+/// Default depth bias (used in utils/texture_2d)
 const level_0_depth_bias: f32 = 0.;
 /// Used in card/agenda_cost.rs to avoid Z-fighting
 const level_1_depth_bias: f32 = 1.0;
@@ -56,7 +45,6 @@ fn setup(
 			..default()
 		})
 		.insert(MainCamera)
-		.insert(FlyCamera::default())
 		.as_pick_camera()
 		.name("Main camera");
 
@@ -85,10 +73,6 @@ fn setup(
 				transform: Transform::from_xyz(0., -DIF, 0.),
 				..default()
 			},
-			// PickableBundle::default(),    // Makes the entity pickable
-			// RaycastPickTarget::default(), // Marker for the `bevy_picking_raycast` backend
-			// OnPointer::<Click>::run_callback(handle_plane_clicked),
 		))
-		// .insert(Collider::cuboid(100.0, DIF, 100.0))
 		.name("Ground");
 }

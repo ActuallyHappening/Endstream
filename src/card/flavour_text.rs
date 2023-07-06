@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use bevy::prelude::*;
 
 use crate::{
-	ext::{EntityCommandsExt, SpawnToParent, TransformExt},
+	utils::{EntityCommandsExt, SpawnToParent, TransformExt},
 	textmesh::{get_text_mesh, Fonts},
 };
 
@@ -53,7 +53,7 @@ impl SpawnToParent for FlavourText {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, _): crate::ext::mutASS,
+		(meshs, mat, _): crate::utils::mutASS,
 	) -> Entity {
 		let mut parent = parent.spawn(PbrBundle {
 			transform: Transform::from_translation(translation).translate(Vec3::Z * almost_zero),

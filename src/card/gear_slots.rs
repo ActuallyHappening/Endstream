@@ -3,8 +3,8 @@ use derive_more::Display;
 use strum::EnumIs;
 
 use crate::{
-	ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, TransformExt},
-	texture_2d,
+	utils::{EntityCommandsExt, IntoAssetPath, SpawnToParent, TransformExt},
+	utils::texture_2d,
 };
 
 use super::almost_zero;
@@ -54,7 +54,7 @@ impl SpawnToParent for GearType {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, ass): crate::ext::mutASS,
+		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
 		let mut parent = parent.spawn(PbrBundle {
 			material: mat.add(texture_2d(ass.load(self.get_asset_path()))),
@@ -84,7 +84,7 @@ impl SpawnToParent for GearSlotFrame {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, ass): crate::ext::mutASS,
+		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
 		let mut frame = parent.spawn(PbrBundle {
 			transform: Transform::from_translation(translation),
@@ -108,7 +108,7 @@ impl SpawnToParent for GearSlots {
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
-		(meshs, mat, ass): crate::ext::mutASS,
+		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
 		let mut parent = parent.spawn(PbrBundle {
 			transform: Transform::from_translation(translation).translate(Vec3::Z * almost_zero),
