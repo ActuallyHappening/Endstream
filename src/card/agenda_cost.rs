@@ -8,8 +8,6 @@ use crate::{
 };
 use bevy::prelude::*;
 
-use super::{left_margin, CARD_WIDTH};
-
 impl SpawnToParent for AgendaCost {
 	fn spawn_using_entity_commands(
 		&self,
@@ -17,8 +15,8 @@ impl SpawnToParent for AgendaCost {
 		translation: Vec3,
 		(meshs, mat, ass): crate::utils::mutASS,
 	) -> Entity {
-		let x = -(CARD_WIDTH / 2.0) + self.width() / 2.0 + left_margin;
-		let transform = Transform::from_translation(x * Vec3::X).translate(translation);
+		
+		let transform = Transform::from_translation(translation);
 		parent
 			.spawn(PbrBundle {
 				transform,

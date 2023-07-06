@@ -14,12 +14,14 @@ use self::background::CardVisualBg;
 use self::flavour_text::FlavourText;
 use self::gear_slots::{GearSlots, GearType};
 use self::general_info::{Class, ClassRace, Gender, Health, Race};
+use self::top_row::TopRow;
 mod agenda_cost;
 mod back;
 mod background;
 mod flavour_text;
 mod gear_slots;
 mod general_info;
+mod top_row;
 
 /// Follows style of card and contains all the information necessary to draw any type of card to the screen.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -27,9 +29,7 @@ pub struct CardVisual {
 	bg: CardVisualBg,
 	back: Back,
 
-	start_century: Option<Century>,
-	activation_cost: Option<AgendaCost>,
-	gear_slots: GearSlots,
+	top_row: TopRow,
 
 	/// Path to artwork image texture
 	artwork: String,
@@ -89,41 +89,15 @@ fn construct_card_from_visual(
 	/* #endregion */
 
 	/* #region top row */
-	/// Margin of top row from the top of the card
-	/// (and margin between bottom of top row and top of artwork)
+
 	const top_margin: f32 = 0.4;
-	// const top_row_y: f32 = 9.5 / 2.;
 	const top_row_y: f32 = CARD_HEIGHT / 2. - top_margin;
+	const top_row_pos: Vec3 = Vec3::new(0., top_row_y, almost_zero);
 
 	parent.with_children(|parent| {
-		parent
-			.spawn(PbrBundle {
-				transform: Transform::from_xyz(0., top_row_y, almost_zero),
-				..default()
-			})
-			.name("Top row")
-			.with_children(|parent| {
-				// spawn century icon
-				if let Some(start_century) = visual.start_century {
-					start_century.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
-				}
-				// end spawn century
-
-				// spawn agenda cost
-				if let Some(agenda_cost) = visual.activation_cost {
-					agenda_cost.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
-				}
-				// end agenda cost
-
-				/* #region gear slots */
-				const gear_slots_x: f32 = CARD_WIDTH / 2. - right_margin - GearSlots::width / 2.;
-				visual.gear_slots.spawn_using_entity_commands(
-					parent,
-					Vec3::X * gear_slots_x,
-					(meshs, mat, ass),
-				);
-				/* #endregion */
-			});
+		visual
+			.top_row
+			.spawn_using_entity_commands(parent, top_row_pos, (meshs, mat, ass));
 	});
 	/* #endregion top row */
 
@@ -170,18 +144,20 @@ fn construct_card_from_visual(
 
 pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 	// spawn_card_cheating(&mut commands, &mut ass);
-	let debug_card = CardVisual {
+	let debug_card: CardVisual = CardVisual {
 		bg: CardVisualBg::Blackish,
 		back: Back::Dotty,
-		start_century: Some(Century::S2100),
-		activation_cost: Some(AgendaCost::new_double(
-			(
-				2,
-				(SingleAgendaType::Military, SingleAgendaType::Wild).into(),
-			),
-			(3, SingleAgendaType::Science.into()),
-		)),
-		gear_slots: GearSlots::new(GearType::Weapon, GearType::Relic),
+		top_row: TopRow {
+			start_century: Some(Century::S2100),
+			activation_cost: Some(AgendaCost::new_double(
+				(
+					2,
+					(SingleAgendaType::Military, SingleAgendaType::Wild).into(),
+				),
+				(3, SingleAgendaType::Science.into()),
+			)),
+			gear_slots: GearSlots::new(GearType::Weapon, GearType::Relic),
+		},
 
 		// activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
 		artwork: String::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
@@ -198,6 +174,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		flavour_text: FlavourText::new("I live by a code. The code says nothing about time travel.")
 			.unwrap(),
 	};
+
 	construct_card_from_visual(
 		debug_card.clone(),
 		Transform::from_xyz(CARD_WIDTH + 2., 5.0, 0.),

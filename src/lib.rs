@@ -1,4 +1,6 @@
 #![allow(non_upper_case_globals)]
+// #![feature(const_option)]
+// #![feature(const_trait_impl)]
 
 use card::spawn_all_cards_debug;
 use bevy::prelude::*;

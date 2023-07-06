@@ -26,7 +26,7 @@ pub struct GearSlots {
 struct GearSlotFrame;
 
 impl GearSlots {
-	pub fn new(first: GearType, second: GearType) -> GearSlots {
+	pub const fn new(first: GearType, second: GearType) -> GearSlots {
 		GearSlots { first, second }
 	}
 }
