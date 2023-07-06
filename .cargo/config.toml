@@ -1,6 +1,4 @@
 [alias]
-bw = "b --target wasm32-unknown-unknown"
-cw = "c --target wasm32-unknown-unknown"
 r = "run -F dev"
 w = "watch -q -c -w src/ -x 'r'"
 bwindows = "b --target x86_64-pc-windows-gnu"
