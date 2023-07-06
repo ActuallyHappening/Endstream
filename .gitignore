@@ -3,6 +3,5 @@ dist/*
 releases/*
 .gitkeep
 
-**/.DS_Store
 .DS_Store
 .DS_Store

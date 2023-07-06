@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_embedded_assets::EmbeddedAssetPlugin;
+// use bevy_embedded_assets::EmbeddedAssetPlugin;
 use bevy_mod_picking::prelude::*;
 use endstream::MainPlugin;
 
@@ -17,7 +17,7 @@ fn main() {
 					..default()
 				})
 				.build()
-				.add_before::<bevy::asset::AssetPlugin, _>(EmbeddedAssetPlugin),
+				// .add_before::<bevy::asset::AssetPlugin, _>(EmbeddedAssetPlugin),
 		)
 		.add_plugin(MainPlugin)
 		.add_plugin(bevy_editor_pls::prelude::EditorPlugin::default())

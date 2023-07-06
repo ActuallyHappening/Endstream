@@ -26,7 +26,7 @@ opt-level = 3
 anyhow = "1.0.71"
 bevy_editor_pls = "0.4.0"
 bevy_egui = "0.20.3"
-bevy_embedded_assets = "0.7.0"
+# bevy_embedded_assets = "0.7.0"
 bevy_fly_camera = "0.10.0"
 bevy_mod_picking = { version = "0.13.0", features = ["backend_rapier"] }
 # bevy_rapier3d = { version = "0.21.0", features = ["debug-render-3d", "simd-nightly"] }
