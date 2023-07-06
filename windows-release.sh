@@ -3,7 +3,7 @@ set -e
 TARGET=x86_64-pc-windows-gnu
 ENV_BINARY=$(cargo get --name)
 
-cargo +nightly b --target $TARGET --release
+cargo +nightly b --target $TARGET --release --no-default-features
 
 mkdir -p $ENV_BINARY.zipfolder
 cp target/$TARGET/release/$ENV_BINARY.exe $ENV_BINARY.zipfolder/

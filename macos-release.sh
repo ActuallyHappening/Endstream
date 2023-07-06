@@ -3,7 +3,7 @@ set -e
 TARGET=x86_64-apple-darwin
 ENV_BINARY=$(cargo get --name)
 
-cargo +nightly build --release --target $TARGET
+cargo +nightly build --release --target $TARGET --no-default-features
 
 mkdir -p $ENV_BINARY.app/Contents/MacOS
 cp target/$TARGET/release/$ENV_BINARY $ENV_BINARY.app/Contents/MacOS/
