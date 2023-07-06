@@ -3,7 +3,6 @@ use derive_more::Display;
 use strum::EnumIs;
 
 use crate::{
-	card::{right_margin, CARD_WIDTH},
 	ext::{EntityCommandsExt, IntoAssetPath, SpawnToParent, TransformExt},
 	texture_2d,
 };
