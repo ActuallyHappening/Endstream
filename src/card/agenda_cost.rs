@@ -1,7 +1,13 @@
-use crate::{agendas::{AgendaCost, AgendaType}, ext::{SpawnToParent, EntityCommandsExt, TransformExt}, texture_2d, textmesh::{get_text_mesh, Fonts}, card::{almost_zero}};
+use crate::{
+	agendas::{AgendaCost, AgendaType},
+	card::almost_zero,
+	ext::{EntityCommandsExt, SpawnToParent, TransformExt},
+	textmesh::{get_text_mesh, Fonts},
+	texture_2d,
+};
 use bevy::prelude::*;
 
-use super::{CARD_WIDTH, left_margin};
+use super::{left_margin, CARD_WIDTH};
 
 impl SpawnToParent for AgendaCost {
 	fn spawn_using_entity_commands(
@@ -53,7 +59,8 @@ impl SpawnToParent for AgendaCost {
 								.name("Only agenda");
 
 							// number
-							let (mesh, offset) = get_text_mesh(only.number.to_string(), number_size, Fonts::Heavy);
+							let (mesh, offset) =
+								get_text_mesh(only.number.to_string(), number_size, Fonts::Heavy);
 							let top_right_transform = Transform::from_xyz(
 								cost_frame_shape.size.x / 2. - number_size / 2.,
 								cost_frame_shape.size.y / 2. - number_size / 2.,
@@ -72,8 +79,7 @@ impl SpawnToParent for AgendaCost {
 							// first
 							let material = texture_2d(ass.load(first.agenda.get_icon_asset_path()));
 							// -0.05 is a slight offset, magic number
-							let transform =
-								Transform::from_xyz(-self.width() / 4. - 0.05, -0.05, almost_zero);
+							let transform = Transform::from_xyz(-self.width() / 4. - 0.05, -0.05, almost_zero);
 
 							cost_frame
 								.spawn(PbrBundle {
@@ -85,7 +91,8 @@ impl SpawnToParent for AgendaCost {
 								.name("First agenda");
 
 							// first number
-							let (t_mesh, offset) = get_text_mesh(second.number.to_string(), number_size, Fonts::Heavy,);
+							let (t_mesh, offset) =
+								get_text_mesh(second.number.to_string(), number_size, Fonts::Heavy);
 							let top_right_transform = Transform::from_xyz(
 								-number_size / 2.,
 								cost_frame_shape.size.y / 2. - number_size / 2.,
@@ -116,7 +123,8 @@ impl SpawnToParent for AgendaCost {
 								.name("Second agenda");
 
 							// second number
-							let (mesh, offset) = get_text_mesh(second.number.to_string(), number_size, Fonts::Heavy,);
+							let (mesh, offset) =
+								get_text_mesh(second.number.to_string(), number_size, Fonts::Heavy);
 							let top_right_transform = Transform::from_xyz(
 								cost_frame_shape.size.x / 2. - number_size / 2.,
 								cost_frame_shape.size.y / 2. - number_size / 2.,
@@ -134,6 +142,7 @@ impl SpawnToParent for AgendaCost {
 					}
 				});
 				// end icons & numbers
-			}).id()
+			})
+			.id()
 	}
 }

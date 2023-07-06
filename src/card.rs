@@ -16,7 +16,7 @@ use century::Century;
 use self::flavour_text::FlavourText;
 use self::gear_slots::{GearSlots, GearType};
 use self::general_info::{Class, ClassRace, Gender, Health, Race};
-mod agenda;
+mod agenda_cost;
 mod flavour_text;
 mod general_info;
 mod gear_slots;
@@ -88,7 +88,7 @@ pub const CARD_HEIGHT: f32 = 10.3;
 const left_margin: f32 = 0.3;
 /// Not structly true, but makes aesthetically pleasing cards
 const right_margin: f32 = left_margin;
-const almost_zero: f32 = 0.01;
+const almost_zero: f32 = 0.1;
 
 /// Constructs a card from component [CardVisual] parts and
 /// returns entity id.
@@ -106,11 +106,8 @@ fn construct_card_from_visual(
 	// spawn background / parent mesh
 	let mesh = meshs.add(shape.into());
 	let material = mat.add(StandardMaterial {
-		base_color_texture: Some(ass.load(visual.bg.get_asset_path())),
-		// base_color: visual.bg.colour_factor(),
-		// alpha_mode: AlphaMode::Blend,
-		unlit: true,
-		..default()
+		alpha_mode: AlphaMode::Opaque,
+		..texture_2d(ass.load(visual.bg.get_asset_path()))
 	});
 
 	position.rotate_x(-90f32.to_radians());
