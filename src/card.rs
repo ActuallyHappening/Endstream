@@ -99,7 +99,9 @@ fn construct_card_from_visual(
 	/* #endregion */
 
 	/* #region back */
-
+	parent.with_children(|parent| {
+		visual.back.spawn_using_entity_commands(parent, Vec3::Z * -almost_zero, (meshs, mat, ass));
+	});
 	/* #endregion */
 
 	/* #region top row */
