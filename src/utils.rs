@@ -77,7 +77,13 @@ impl TransformExt for Transform {
 
 /// Offset by `Vec3::Z * almost_zero` to avoid z-fighting
 pub trait SpawnToParent {
-	fn spawn_using_entity_commands(&self, parent: &mut ChildBuilder<'_, '_, '_>, translation: Vec3, ass: mutASS) -> Entity;
+	fn spawn_to_child_builder(&self, parent: &mut ChildBuilder<'_, '_, '_>, translation: Vec3, ass: mutASS) -> Entity;
+	
+	fn spawn_to_parent(&self, parent: &mut EntityCommands<'_, '_, '_>, translation: Vec3, ass: mutASS) {
+		parent.with_children(|parent| {
+			self.spawn_to_child_builder(parent, translation, ass);
+		});
+	}
 	
 	// fn spawn_using_commands(&self, commands: &mut Commands) -> Entity {
 	// 	commands.spawn_empty().with_children(|parent| {

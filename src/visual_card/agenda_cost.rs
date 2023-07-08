@@ -9,7 +9,7 @@ use crate::{
 use bevy::prelude::*;
 
 impl SpawnToParent for AgendaCost {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,

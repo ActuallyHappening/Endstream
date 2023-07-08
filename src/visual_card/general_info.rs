@@ -74,7 +74,7 @@ impl ControllerGeneralInfo {
 }
 
 impl SpawnToParent for ControllerGeneralInfo {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut bevy::prelude::ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
@@ -155,7 +155,7 @@ impl SpawnToParent for ControllerGeneralInfo {
 		parent.with_children(|parent| {
 			self
 				.gender
-				.spawn_using_entity_commands(parent, gender_transform, (meshs, mat, ass));
+				.spawn_to_child_builder(parent, gender_transform, (meshs, mat, ass));
 		});
 
 		const margin: f32 = 0.2;
@@ -165,7 +165,7 @@ impl SpawnToParent for ControllerGeneralInfo {
 		parent.with_children(|parent| {
 			self
 				.race
-				.spawn_using_entity_commands(parent, class_race_transform, (meshs, mat, ass));
+				.spawn_to_child_builder(parent, class_race_transform, (meshs, mat, ass));
 		});
 
 		// health
@@ -177,7 +177,7 @@ impl SpawnToParent for ControllerGeneralInfo {
 		parent.with_children(|parent| {
 			self
 				.health
-				.spawn_using_entity_commands(parent, health_transform, (meshs, mat, ass));
+				.spawn_to_child_builder(parent, health_transform, (meshs, mat, ass));
 		});
 
 		parent.id()
@@ -201,7 +201,7 @@ impl Gender {
 }
 
 impl SpawnToParent for Gender {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
@@ -235,7 +235,7 @@ impl std::fmt::Display for ClassRace {
 }
 
 impl SpawnToParent for ClassRace {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
@@ -276,7 +276,7 @@ impl Health {
 }
 
 impl SpawnToParent for Health {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,

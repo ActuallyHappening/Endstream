@@ -72,67 +72,54 @@ fn construct_card_from_visual(
 	parent.name("Card (parent)");
 
 	/* #region front background */
-	parent.with_children(|parent| {
-		visual
-			.bg
-			.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
-	});
+	visual
+		.bg
+		.spawn_to_parent(&mut parent, Vec3::ZERO, (meshs, mat, ass));
 	/* #endregion */
 
 	/* #region back */
-	parent.with_children(|parent| {
-		visual
-			.back
-			.spawn_using_entity_commands(parent, Vec3::Z * -almost_zero, (meshs, mat, ass));
-	});
+	visual
+		.back
+		.spawn_to_parent(&mut parent, Vec3::Z * -almost_zero, (meshs, mat, ass));
 	/* #endregion */
 
 	/* #region top row */
-
 	const top_margin: f32 = 0.4;
 	const top_row_y: f32 = CARD_HEIGHT / 2. - top_margin;
 	const top_row_pos: Vec3 = Vec3::new(0., top_row_y, almost_zero);
 
-	parent.with_children(|parent| {
-		visual
-			.top_row
-			.spawn_using_entity_commands(parent, top_row_pos, (meshs, mat, ass));
-	});
+	visual
+		.top_row
+		.spawn_to_parent(&mut parent, top_row_pos, (meshs, mat, ass));
 	/* #endregion top row */
 
 	/* #region artwork */
 	const artwork_y: f32 = top_row_y - Artwork::height / 2. - top_margin;
-	parent.with_children(|parent| {
-		visual.artwork.spawn_using_entity_commands(
-			parent,
-			artwork_y * Vec3::Y + almost_zero * Vec3::Z,
-			(meshs, mat, ass),
-		);
-	});
+	visual.artwork.spawn_to_parent(
+		&mut parent,
+		artwork_y * Vec3::Y + almost_zero * Vec3::Z,
+		(meshs, mat, ass),
+	);
 	/* #endregion artwork */
 
 	/* #region general info */
-	const general_y: f32 =
-		artwork_y - Artwork::height / 2. - ControllerGeneralInfo::height / 2.;
-	parent.with_children(|general_row| {
-		let general = visual.info;
-		general.spawn_using_entity_commands(general_row, Vec3::Y * general_y, (meshs, mat, ass));
-	});
+	const general_y: f32 = artwork_y - Artwork::height / 2. - ControllerGeneralInfo::height / 2.;
+	visual.info.spawn_to_parent(
+		&mut parent,
+		Vec3::Y * general_y + Vec3::Z * almost_zero,
+		(meshs, mat, ass),
+	);
 	/* #endregion general info */
 
 	/* #region abilities */
-
+	// TODO
 	/* #endregion abilities */
 
 	/* #region flavour text */
 	const flavour_y: f32 = CARD_HEIGHT / -2. + FlavourText::margin_from_bottom;
-	parent.with_children(|flavour_text| {
-		visual.flavour_text.spawn_using_entity_commands(
-			flavour_text,
-			Vec3::Y * flavour_y,
-			(meshs, mat, ass),
-		);
-	});
+	visual
+		.flavour_text
+		.spawn_to_parent(&mut parent, Vec3::Y * flavour_y + Vec3::Z * almost_zero, (meshs, mat, ass));
 	/* #endregion flavour text */
 
 	parent.id()

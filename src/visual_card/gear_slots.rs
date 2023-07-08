@@ -50,7 +50,7 @@ impl GearType {
 }
 
 impl SpawnToParent for GearType {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
@@ -80,7 +80,7 @@ impl GearSlotFrame {
 }
 
 impl SpawnToParent for GearSlotFrame {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
@@ -104,7 +104,7 @@ impl GearSlots {
 }
 
 impl SpawnToParent for GearSlots {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
@@ -122,8 +122,8 @@ impl SpawnToParent for GearSlots {
 			let translation = Vec3::X * right_x;
 			self
 				.second
-				.spawn_using_entity_commands(parent, translation, (meshs, mat, ass));
-			GearSlotFrame.spawn_using_entity_commands(parent, translation, (meshs, mat, ass));
+				.spawn_to_child_builder(parent, translation, (meshs, mat, ass));
+			GearSlotFrame.spawn_to_child_builder(parent, translation, (meshs, mat, ass));
 		});
 		/* #endregion */
 
@@ -133,8 +133,8 @@ impl SpawnToParent for GearSlots {
 			let translation = Vec3::X * left_z;
 			self
 				.first
-				.spawn_using_entity_commands(parent, translation, (meshs, mat, ass));
-			GearSlotFrame.spawn_using_entity_commands(parent, translation, (meshs, mat, ass));
+				.spawn_to_child_builder(parent, translation, (meshs, mat, ass));
+			GearSlotFrame.spawn_to_child_builder(parent, translation, (meshs, mat, ass));
 		});
 		/* #endregion */
 

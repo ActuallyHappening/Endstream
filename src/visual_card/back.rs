@@ -26,7 +26,7 @@ impl Back {
 }
 
 impl SpawnToParent for Back {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,

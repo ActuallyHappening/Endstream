@@ -38,7 +38,7 @@ impl Century {
 }
 
 impl SpawnToParent for Century {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut bevy::prelude::ChildBuilder<'_, '_, '_>,
 		translation: Vec3,

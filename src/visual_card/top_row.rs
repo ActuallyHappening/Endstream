@@ -12,7 +12,7 @@ pub struct TopRow {
 }
 
 impl SpawnToParent for TopRow {
-	fn spawn_using_entity_commands(
+	fn spawn_to_child_builder(
 		&self,
 		parent: &mut ChildBuilder<'_, '_, '_>,
 		translation: Vec3,
@@ -27,20 +27,20 @@ impl SpawnToParent for TopRow {
 		top_row.with_children(|parent| {
 			// spawn century icon
 			if let Some(start_century) = &self.start_century {
-				start_century.spawn_using_entity_commands(parent, Vec3::ZERO, (meshs, mat, ass));
+				start_century.spawn_to_child_builder(parent, Vec3::ZERO, (meshs, mat, ass));
 			}
 			// end spawn century
 
 			// spawn agenda cost
 			if let Some(agenda_cost) = &self.activation_cost {
 				let x = -(CARD_WIDTH / 2.0) + agenda_cost.width() / 2.0 + left_margin;
-				agenda_cost.spawn_using_entity_commands(parent, Vec3::X * x, (meshs, mat, ass));
+				agenda_cost.spawn_to_child_builder(parent, Vec3::X * x, (meshs, mat, ass));
 			}
 			// end agenda cost
 
 			/* #region gear slots */
 			const gear_slots_x: f32 = CARD_WIDTH / 2. - right_margin - GearSlots::width / 2.;
-			self.gear_slots.spawn_using_entity_commands(
+			self.gear_slots.spawn_to_child_builder(
 				parent,
 				Vec3::X * gear_slots_x,
 				(meshs, mat, ass),
