@@ -1,7 +1,7 @@
 #![allow(non_upper_case_globals)]
 
 use crate::agendas::{AgendaCost, SingleAgendaType};
-use crate::utils::{texture_2d, EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS};
+use crate::utils::{EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS};
 use crate::visual_card::general_info::ControllerGeneralInfo;
 use bevy::prelude::*;
 use std::num::NonZeroU8;
