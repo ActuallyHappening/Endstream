@@ -7,7 +7,7 @@ use crate::{
 	textmesh::{get_text_mesh, Fonts},
 };
 
-use super::almost_zero;
+
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FlavourText {

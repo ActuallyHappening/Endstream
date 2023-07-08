@@ -5,4 +5,6 @@ struct EquiptmentCSV {
 	equiptment: String,
 }
 
-fn main() {}
+fn main() {
+	let mut reader = csv::Reader::from_reader(include_bytes!("../assets/card-csv-data/GC-1.csv"));
+}
