@@ -11,6 +11,7 @@ mod card;
 mod agendas;
 mod textmesh;
 mod utils;
+mod data;
 
 
 pub struct MainPlugin;

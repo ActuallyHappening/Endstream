@@ -1,0 +1,1056 @@
+{
+  "cards": [
+    {
+      "operatorName":"Mori",
+      "century":1800,
+      "variantName":"The Piercer",
+      "defense":1,
+      "sex":"male",
+      "flavourText":"I live by a code. The code says nothing about time travel.",
+      "spritePath":"Sprites/Cards/Operators/mori_the_piercer",
+      "tech_Slots":[
+        "weapon",
+        "relic"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"After a MOVE Mori may STRIKE [1]",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"After a MOVE Mori may STRIKE [1]",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"After a MOVE Mori may STRIKE [1]",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Angela Storm",
+      "century":2000,
+      "variantName":null,
+      "defense":3,
+      "sex":"trans",
+      "flavourText":"Ask me if this is the worst I can do. Please.",
+      "spritePath":"Sprites/Cards/Operators/angela_storm",
+      "tech_Slots":[
+        "weapon",
+        "device"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"DISABLE all enemy male operators",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Politics",
+              "quantity":2
+            }
+          ]
+        },
+        {
+          "text":"DISABLE all enemy male operators",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Politics",
+              "quantity":2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Ben Storm",
+      "century":2000,
+      "variantName":null,
+      "defense":2,
+      "sex":"male",
+      "flavourText":"You think my ambitions are twisted? You haven't met my twin sister.",
+      "spritePath":"Sprites/Cards/Operators/ben_storm",
+      "tech_Slots":[
+        "weapon",
+        "device"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"Ambush: DISABLE any operator that MOVEs into Ben Storm's turnpoint on opponent’s next turn",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Science",
+              "quantity":2
+            }
+          ]
+        },
+        {
+          "text":"Ambush: DISABLE any operator that MOVEs into Ben Storm's turnpoint on opponent’s next turn",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Science",
+              "quantity":2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Ben Storm",
+      "century":2000,
+      "variantName":"The Looper",
+      "defense":1,
+      "sex":"male",
+      "flavourText":"Koh spliced away one too many of my inhibition genes. He'll pay, together with anyone else in my runway.",
+      "spritePath":"Sprites/Cards/Operators/ben_storm_the_looper",
+      "tech_Slots":[
+        "weapon",
+        "device"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"STREAM to the turnpoint of target operator anywhere on the board and STRIKE [2]. At the end of the turn STREAM back to current turnpoint",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Science",
+              "quantity":3
+            }
+          ]
+        },
+        {
+          "text":"STREAM to the turnpoint of target operator anywhere on the board and STRIKE [2]. At the end of the turn STREAM back to current turnpoint",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Science",
+              "quantity":3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Ben Storm",
+      "century":2100,
+      "variantName":"The Transcended",
+      "defense":2,
+      "sex":"genderless",
+      "flavourText":"Join me outside the box, dead and alive.",
+      "spritePath":"Sprites/Cards/Operators/ben_storm_the_transcended",
+      "tech_Slots":[
+        "device",
+        "device"
+      ],
+      "types":[
+        "Post-Human"
+      ],
+      "abilities":[
+        {
+          "text":"When activated, DISABLE all other operators named Ben Storm and Angela Storm",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"When activated, DISABLE all other operators named Ben Storm and Angela Storm",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"When activated, DISABLE all other operators named Ben Storm and Angela Storm",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Akane",
+      "century":2100,
+      "variantName":null,
+      "defense":3,
+      "sex":"female",
+      "flavourText":"'Not like this' I asked, but he had two needs of me.",
+      "spritePath":"Sprites/Cards/Operators/akane",
+      "tech_Slots":[
+        "device",
+        "device"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"Cannot end the turn on the same turnpoint as Mori. Use an extra MOVE if Akane has already moved this turn.",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Cannot end the turn on the same turnpoint as Mori. Use an extra MOVE if Akane has already moved this turn.",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Cannot end the turn on the same turnpoint as Mori. Use an extra MOVE if Akane has already moved this turn.",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"The Pale Man",
+      "century":2200,
+      "variantName":null,
+      "defense":2,
+      "sex":"genderless",
+      "flavourText":"I do not have higher functions.",
+      "spritePath":"Sprites/Cards/Operators/the_pale_man",
+      "tech_Slots":[
+        "weapon",
+        "device"
+      ],
+      "types":[
+        "Drone",
+        "Orbital Strike Team"
+      ],
+      "abilities":[
+        {
+          "text":"STRIKE [3]",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Science",
+              "quantity":3
+            }
+          ]
+        },
+        {
+          "text":"STRIKE [3]",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Science",
+              "quantity":3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Mia Star",
+      "century":2300,
+      "variantName":null,
+      "defense":2,
+      "sex":"female",
+      "flavourText":"My mind is a star and my palms are solar sails.",
+      "spritePath":"Sprites/Cards/Operators/mia_star",
+      "tech_Slots":[
+        "device",
+        "device"
+      ],
+      "types":[
+        "Human",
+        "Orbital Strike Team"
+      ],
+      "abilities":[
+        {
+          "text":"When moving, can take along a friendly operator",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"When moving, can take along a friendly operator",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"When moving, can take along a friendly operator",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Augur",
+      "century":2300,
+      "variantName":"Stream-Phase Shaman",
+      "defense":1,
+      "sex":"male",
+      "flavourText":"The dead call to me from the void between the streams. I feed the living to them.",
+      "spritePath":"Sprites/Cards/Operators/augur_stream_phase_shaman",
+      "tech_Slots":[
+        "relic",
+        "relic"
+      ],
+      "types":[
+        "Human",
+        "Orbital Strike Team"
+      ],
+      "abilities":[
+        {
+          "text":"Stream-shade: create a copy of Augur in the opposite turnpoint. It has the type ghost, is FRAIL, and mirrors all of Augur’s actions.",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Politics",
+              "quantity":2
+            },
+            {
+              "agenda":"Wild",
+              "quantity":1
+            }
+          ]
+        },
+        {
+          "text":"Stream-shade: create a copy of Augur in the opposite turnpoint. It has the type ghost, is FRAIL, and mirrors all of Augur’s actions.",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Politics",
+              "quantity":2
+            },
+            {
+              "agenda":"Wild",
+              "quantity":1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Man Bon-Hwa",
+      "century":2300,
+      "variantName":null,
+      "defense":2,
+      "sex":"male",
+      "flavourText":"I adore women, the pinnacle of their free will is slavery. All they need is the right master.",
+      "spritePath":"Sprites/Cards/Operators/man_bon_hwa",
+      "tech_Slots":[
+        "weapon",
+        "device"
+      ],
+      "types":[
+        "Human",
+        "Orbital Strike Team"
+      ],
+      "abilities":[
+        {
+          "text":"Cannot be struck by female operators",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Cannot be struck by female operators",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Cannot be struck by female operators",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Big Boy",
+      "century":2300,
+      "variantName":null,
+      "defense":4,
+      "sex":"genderless",
+      "flavourText":"Make room. Or don't.",
+      "spritePath":"Sprites/Cards/Operators/big_boy",
+      "tech_Slots":[
+        "weapon",
+        "weapon"
+      ],
+      "types":[
+        "Drone",
+        "Orbital Strike Team"
+      ],
+      "abilities":[
+        {
+          "text":"Can be activated in any turnpoint but cannot MOVE on its own",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Can be activated in any turnpoint but cannot MOVE on its own",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Can be activated in any turnpoint but cannot MOVE on its own",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Little Boy",
+      "century":2100,
+      "variantName":null,
+      "defense":1,
+      "sex":"genderless",
+      "flavourText":"Fasten your seatbelts.",
+      "spritePath":"Sprites/Cards/Operators/little_boy",
+      "tech_Slots":[
+        "device",
+        "device"
+      ],
+      "types":[
+        "Drone",
+        "Orbital Strike Team"
+      ],
+      "abilities":[
+        {
+          "text":"STREAM enemy operator from current to any turnpoint",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Wild",
+              "quantity":2
+            }
+          ]
+        },
+        {
+          "text":"STREAM enemy operator from current to any turnpoint",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Wild",
+              "quantity":2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Sourayah",
+      "century":1800,
+      "variantName":"The Bad Prophet",
+      "defense":3,
+      "sex":"female",
+      "flavourText":"They all think they need me, freely willing to sacrifice so much. This is how my gift works.",
+      "spritePath":"Sprites/Cards/Operators/sourayah_the_bad_prophet",
+      "tech_Slots":[
+        "relic",
+        "relic"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"Cannot MOVE upstream",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Cannot MOVE upstream",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Cannot MOVE upstream",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Aran",
+      "century":1900,
+      "variantName":null,
+      "defense":1,
+      "sex":"male",
+      "flavourText":"I am like the ham'sin: desert wind, dust, and pain.",
+      "spritePath":"Sprites/Cards/Operators/aran",
+      "tech_Slots":[
+        "weapon",
+        "weapon"
+      ],
+      "types":[
+        "Human",
+        "Unit 707"
+      ],
+      "abilities":[
+        {
+          "text":"Can MOVE into any turnpoint, ignores restrictions. Cannot be immobilized",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Can MOVE into any turnpoint, ignores restrictions. Cannot be immobilized",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Can MOVE into any turnpoint, ignores restrictions. Cannot be immobilized",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Layla",
+      "century":2000,
+      "variantName":null,
+      "defense":2,
+      "sex":"female",
+      "flavourText":"If the desert sand does not drink you, I will.",
+      "spritePath":"Sprites/Cards/Operators/layla",
+      "tech_Slots":[
+        "device",
+        "relic"
+      ],
+      "types":[
+        "Human",
+        "Unit 707"
+      ],
+      "abilities":[
+        {
+          "text":"Can MOVE 2 times in a turn",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Can MOVE 2 times in a turn",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Can MOVE 2 times in a turn",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Hamdi",
+      "century":2000,
+      "variantName":null,
+      "defense":4,
+      "sex":"male",
+      "flavourText":"Blood sometimes gets mixed in my black coffee, I like the taste.",
+      "spritePath":"Sprites/Cards/Operators/hamdi",
+      "tech_Slots":[
+        "weapon",
+        "device"
+      ],
+      "types":[
+        "Human",
+        "Unit 707"
+      ],
+      "abilities":[
+        {
+          "text":"STRIKE [3]",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military",
+              "quantity":2
+            },
+            {
+              "agenda":"Wild",
+              "quantity":1
+            }
+          ]
+        },
+        {
+          "text":"STRIKE [3]",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military",
+              "quantity":2
+            },
+            {
+              "agenda":"Wild",
+              "quantity":1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Marwa",
+      "century":2100,
+      "variantName":null,
+      "defense":3,
+      "sex":"female",
+      "flavourText":"Some thought I was too pretty to give commands.",
+      "spritePath":"Sprites/Cards/Operators/marwa",
+      "tech_Slots":[
+        "weapon",
+        "device"
+      ],
+      "types":[
+        "Human",
+        "Unit 707"
+      ],
+      "abilities":[
+        {
+          "text":"All friendly Unit 707 operators can be activated on Marwa's turnpoint",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"All friendly Unit 707 operators can be activated on Marwa's turnpoint",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"All friendly Unit 707 operators can be activated on Marwa's turnpoint",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Dr. Koh",
+      "century":2200,
+      "variantName":null,
+      "defense":2,
+      "sex":"female",
+      "flavourText":"You see yourself as a whole, in form and mind, but you are not. Let me show you.",
+      "spritePath":"Sprites/Cards/Operators/dr_koh",
+      "tech_Slots":[
+        "device",
+        "relic"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"ACTIVATE a disintegrated friendly operator in 2200 in your stream",
+          "type":0,
+          "cost":[
+            {
+              "agenda":"Science",
+              "quantity":2
+            },
+            {
+              "agenda":"Wild",
+              "quantity":2
+            }
+          ]
+        },
+        {
+          "text":"ACTIVATE a disintegrated friendly operator in 2200 in your stream",
+          "type":0,
+          "cost":[
+            {
+              "agenda":"Science",
+              "quantity":2
+            },
+            {
+              "agenda":"Wild",
+              "quantity":2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Captain Shortspear",
+      "century":1800,
+      "variantName":null,
+      "defense":2,
+      "sex":"male",
+      "flavourText":"You won't pick me out in a crowd, not until my pistol is in your face.",
+      "spritePath":"Sprites/Cards/Operators/captain_shortspear",
+      "tech_Slots":[
+        "weapon",
+        "weapon"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"STRIKE [2] at up to 2 different targets",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Science",
+              "quantity":3
+            }
+          ]
+        },
+        {
+          "text":"STRIKE [2] at up to 2 different targets",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military/Science",
+              "quantity":3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Soren",
+      "century":1800,
+      "variantName":"Glasskin",
+      "defense":2,
+      "sex":"male",
+      "flavourText":"You keep calling me Soren, you really shouldn't.",
+      "spritePath":"Sprites/Cards/Operators/soren_glasskin",
+      "tech_Slots":[
+        "relic",
+        "relic"
+      ],
+      "types":[
+        "Post-Human"
+      ],
+      "abilities":[
+        {
+          "text":"DISABLE an enemy operator. Soren becomes that operator with extra ability: pay 1x to turn back to Soren.",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Wild",
+              "quantity":3
+            }
+          ]
+        },
+        {
+          "text":"DISABLE an enemy operator. Soren becomes that operator with extra ability: pay 1x to turn back to Soren.",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Wild",
+              "quantity":3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Soren",
+      "century":1900,
+      "variantName":"The Faceless",
+      "defense":3,
+      "sex":"male",
+      "flavourText":"Time erases all faces, but I forget none.",
+      "spritePath":"Sprites/Cards/Operators/soren_the_faceless",
+      "tech_Slots":[
+        "device",
+        "relic"
+      ],
+      "types":[
+        "Post-Human"
+      ],
+      "abilities":[
+        {
+          "text":"At the end of each player's turn any operator that is in Soren’s turnpoint must STREAM to their original turnpoint",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"At the end of each player's turn any operator that is in Soren’s turnpoint must STREAM to their original turnpoint",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"At the end of each player's turn any operator that is in Soren’s turnpoint must STREAM to their original turnpoint",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"The Gray Baron",
+      "century":1900,
+      "variantName":null,
+      "defense":2,
+      "sex":"female",
+      "flavourText":"Men of power cast dark shadows. The closer a woman gets, the easier for her to hide in them.",
+      "spritePath":"Sprites/Cards/Operators/the_gray_baron",
+      "tech_Slots":[
+        "device",
+        "relic"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"STRIKE [2]",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Politics",
+              "quantity":1
+            },
+            {
+              "agenda":"Wild",
+              "quantity":1
+            }
+          ]
+        },
+        {
+          "text":"STRIKE [2]",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Politics",
+              "quantity":1
+            },
+            {
+              "agenda":"Wild",
+              "quantity":1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Dr. Roşu",
+      "century":1900,
+      "variantName":null,
+      "defense":2,
+      "sex":"female",
+      "flavourText":"They never suspect.",
+      "spritePath":"Sprites/Cards/Operators/dr_rosu",
+      "tech_Slots":[
+        "weapon",
+        "device"
+      ],
+      "types":[
+        "Human"
+      ],
+      "abilities":[
+        {
+          "text":"Give a friendly operator +3 ARMOR",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military",
+              "quantity":2
+            },
+            {
+              "agenda":"Wild",
+              "quantity":1
+            }
+          ]
+        },
+        {
+          "text":"Give a friendly operator +3 ARMOR",
+          "type":1,
+          "cost":[
+            {
+              "agenda":"Military",
+              "quantity":2
+            },
+            {
+              "agenda":"Wild",
+              "quantity":1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Mr. Roşu",
+      "century":1900,
+      "variantName":null,
+      "defense":1,
+      "sex":"male",
+      "flavourText":"If the devil grants you your wish, is he still the devil? Or do you become the devil by paying his price?",
+      "spritePath":"Sprites/Cards/Operators/mr_rosu",
+      "tech_Slots":[
+        "device",
+        "device"
+      ],
+      "types":[
+        "Post-Human"
+      ],
+      "abilities":[
+        {
+          "text":"Can't have more than 3 Puppets of Despair on the board",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Can't have more than 3 Puppets of Despair on the board",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Can't have more than 3 Puppets of Despair on the board",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Ze'ev",
+      "century":2100,
+      "variantName":null,
+      "defense":4,
+      "sex":"genderless",
+      "flavourText":"My arms are stronger than steel. My legs are lighter than wind. My heart burns brighter than the sun.",
+      "spritePath":"Sprites/Cards/Operators/zeev",
+      "tech_Slots":[
+        "weapon",
+        "relic"
+      ],
+      "types":[
+        "Post-Human"
+      ],
+      "abilities":[
+        {
+          "text":"When moving can take along a friendly DISABLED operator",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"When moving can take along a friendly DISABLED operator",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"When moving can take along a friendly DISABLED operator",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    },
+    {
+      "operatorName":"Emory IV",
+      "century":2000,
+      "variantName":null,
+      "defense":5,
+      "sex":"male",
+      "flavourText":"What color is your bugatti, nerd?",
+      "spritePath":"Sprites/Cards/Operators/emory_iv",
+      "techSlots":[
+        "weapon",
+        "weapon"
+      ],
+      "types":[
+        "Post-Human"
+      ],
+      "abilities":[
+        {
+          "text":"Once per turn, if Emory IV is being the target of an ability that was paid for using [P] he can redirect it to a new target",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Once per turn, if Emory IV is being the target of an ability that was paid for using [P] he can redirect it to a new target",
+          "type":2,
+          "cost":[
+            
+          ]
+        },
+        {
+          "text":"Once per turn, if Emory IV is being the target of an ability that was paid for using [P] he can redirect it to a new target",
+          "type":2,
+          "cost":[
+            
+          ]
+        }
+      ]
+    }
+  ]
+}
