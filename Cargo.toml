@@ -40,6 +40,7 @@ strum = { version = "0.25.0", features = ["derive"] }
 textwrap = "0.16.0"
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.17", features = ["time"] }
+colored = "2.0.4"
 
 [dependencies.bevy]
 # path = "../bevy"

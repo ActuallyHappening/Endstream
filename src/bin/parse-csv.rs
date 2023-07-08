@@ -1,3 +1,4 @@
+use colored::Colorize;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -6,5 +7,6 @@ struct EquiptmentCSV {
 }
 
 fn main() {
-	let mut reader = csv::Reader::from_reader(include_bytes!("../assets/card-csv-data/GC-1.csv"));
+	// let mut reader = csv::Reader::from_reader(include_bytes!("../assets/card-csv-data/GC-1.csv"));
+	println!("{}", "this is blue".yellow());
 }

@@ -24,6 +24,8 @@ mod flavour_text;
 mod gear_slots;
 mod general_info;
 mod top_row;
+mod ability;
+mod abilities;
 
 /// Follows style of card and contains all the information necessary to draw any type of card to the screen.
 #[derive(Debug, Clone, PartialEq, Eq)]
