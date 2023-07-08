@@ -1,7 +1,7 @@
 use strum::IntoStaticStr;
 use bevy::prelude::*;
 
-use crate::{utils::texture_2d, textmesh::{get_text_mesh, Fonts}, utils::{SpawnToParent, EntityCommandsExt, mutASS, TransformExt}, card::{almost_zero}};
+use crate::{utils::texture_2d, textmesh::{get_text_mesh, Fonts}, utils::{SpawnToParent, EntityCommandsExt, mutASS, TransformExt}, visual_card::{almost_zero}};
 
 #[derive(IntoStaticStr, Debug, Clone, PartialEq, Eq)]
 pub enum Century {

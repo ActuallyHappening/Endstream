@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{agendas::AgendaCost, utils::{SpawnToParent, EntityCommandsExt}, card::{CARD_WIDTH, right_margin, left_margin}};
+use crate::{agendas::AgendaCost, utils::{SpawnToParent, EntityCommandsExt}, visual_card::{CARD_WIDTH, right_margin, left_margin}};
 
 use super::{century::Century, gear_slots::GearSlots};
 

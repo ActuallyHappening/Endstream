@@ -1,5 +1,8 @@
+use serde::{Deserialize, Serialize};
 
-
-fn main() {
-
+#[derive(Serialize, Deserialize, Debug)]
+struct EquiptmentCSV {
+	equiptment: String,
 }
+
+fn main() {}

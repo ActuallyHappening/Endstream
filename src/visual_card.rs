@@ -1,14 +1,15 @@
 #![allow(non_upper_case_globals)]
 
 use crate::agendas::{AgendaCost, SingleAgendaType};
-use crate::card::general_info::ControllerGeneralInfo;
 use crate::utils::{texture_2d, EntityCommandsExt, IntoAssetPath, SpawnToParent, ASS};
+use crate::visual_card::general_info::ControllerGeneralInfo;
 use bevy::prelude::*;
 use std::num::NonZeroU8;
 
 mod century;
 use century::Century;
 
+use self::artwork::Artwork;
 use self::back::Back;
 use self::background::CardVisualBg;
 use self::flavour_text::FlavourText;
@@ -16,6 +17,7 @@ use self::gear_slots::{GearSlots, GearType};
 use self::general_info::{Class, ClassRace, Gender, Health, Race};
 use self::top_row::TopRow;
 mod agenda_cost;
+mod artwork;
 mod back;
 mod background;
 mod flavour_text;
@@ -31,8 +33,7 @@ pub struct CardVisual {
 
 	top_row: TopRow,
 
-	/// Path to artwork image texture
-	artwork: String,
+	artwork: Artwork,
 
 	info: ControllerGeneralInfo,
 
@@ -40,8 +41,6 @@ pub struct CardVisual {
 }
 
 impl CardVisual {
-	pub const artwork_height: f32 = 5.1;
-
 	const dimensions: Vec2 = Vec2::new(CARD_WIDTH, CARD_HEIGHT);
 }
 
@@ -102,22 +101,19 @@ fn construct_card_from_visual(
 	/* #endregion top row */
 
 	/* #region artwork */
-	const artwork_y: f32 = top_row_y - CardVisual::artwork_height / 2. - top_margin;
+	const artwork_y: f32 = top_row_y - Artwork::height / 2. - top_margin;
 	parent.with_children(|parent| {
-		parent
-			.spawn(PbrBundle {
-				material: mat.add(texture_2d(ass.load(visual.artwork))),
-				mesh: meshs.add(shape::Quad::new(Vec2::new(CARD_WIDTH, CardVisual::artwork_height)).into()),
-				transform: Transform::from_xyz(0., artwork_y, almost_zero),
-				..default()
-			})
-			.name("Artwork");
+		visual.artwork.spawn_using_entity_commands(
+			parent,
+			artwork_y * Vec3::Y + almost_zero * Vec3::Z,
+			(meshs, mat, ass),
+		);
 	});
 	/* #endregion artwork */
 
 	/* #region general info */
 	const general_y: f32 =
-		artwork_y - CardVisual::artwork_height / 2. - ControllerGeneralInfo::height / 2.;
+		artwork_y - Artwork::height / 2. - ControllerGeneralInfo::height / 2.;
 	parent.with_children(|general_row| {
 		let general = visual.info;
 		general.spawn_using_entity_commands(general_row, Vec3::Y * general_y, (meshs, mat, ass));
@@ -160,7 +156,7 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 		},
 
 		// activation_cost: Some(AgendaCost::new_single(3, SingleAgendaType::Politics.into())),
-		artwork: String::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
+		artwork: Artwork::from("operators/2-V4 - R - 02 Mori 28 FINAL.png"),
 		info: ControllerGeneralInfo {
 			name: "Mori".to_string(),
 			aka_name: Some("The Piercer".to_string()),

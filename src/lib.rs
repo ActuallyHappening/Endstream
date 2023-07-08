@@ -2,12 +2,12 @@
 // #![feature(const_option)]
 // #![feature(const_trait_impl)]
 
-use card::spawn_all_cards_debug;
+use visual_card::spawn_all_cards_debug;
 use bevy::prelude::*;
 
 use crate::utils::EntityCommandsExt;
 
-mod card;
+mod visual_card;
 mod agendas;
 mod textmesh;
 mod utils;

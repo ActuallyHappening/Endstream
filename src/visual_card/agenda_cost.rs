@@ -1,6 +1,6 @@
 use crate::{
 	agendas::{AgendaCost, AgendaType},
-	card::almost_zero,
+	visual_card::almost_zero,
 	utils::{EntityCommandsExt, SpawnToParent, TransformExt},
 	level_1_depth_bias,
 	textmesh::{get_text_mesh, Fonts},

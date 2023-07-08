@@ -2,7 +2,7 @@ use std::num::NonZeroU8;
 
 use super::{almost_zero, left_margin, CARD_WIDTH};
 use crate::{
-	card::right_margin,
+	visual_card::right_margin,
 	utils::{EntityCommandsExt, IntoAssetPath, SpawnToParent, TransformExt},
 	textmesh::{get_text_mesh, get_text_mesh_with_bbox, BoundingBoxExt, Fonts},
 	utils::texture_2d,
