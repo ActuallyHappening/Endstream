@@ -98,6 +98,7 @@ impl IntoIterator for AgendaType {
 }
 
 impl AgendaType {
+	/// Width of single cost rectangle
 	pub const width: f32 = 0.8;
 	pub const height: f32 = 0.35;
 

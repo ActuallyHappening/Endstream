@@ -6,15 +6,21 @@ use derive_more::{From, Into};
 use strum::EnumIs;
 use textwrap::{wrap, Options, WordSeparator};
 
+use crate::{
+	agendas::{AgendaCostItem, AgendaType},
+	utils::texture_2d,
+};
+
 use super::*;
+
+pub struct Ability {
+	form: AbilityForm,
+	text: AbilityText,
+}
 
 pub enum AbilityForm {
 	Cost(AgendaCost),
 	Passive,
-}
-
-impl AbilityForm {
-	const passive_asset_path: &str = "assets/card-icons/passive-ability.png";
 }
 
 /// Word that should be rendered in different colour
@@ -32,11 +38,6 @@ struct UnwrappedAbilityText(Vec<(String, HighlightedSpan)>);
 /// *Wrapped* ability text
 #[derive(From, Debug, Clone, PartialEq, Eq)]
 struct AbilityText(Vec<Vec<(String, HighlightedSpan)>>);
-
-pub struct Ability {
-	form: AbilityForm,
-	text: AbilityText,
-}
 
 impl FromStr for HighlightedSpan {
 	type Err = anyhow::Error;
@@ -106,7 +107,9 @@ impl std::fmt::Display for AbilityText {
 }
 
 impl UnwrappedAbilityText {
-	const word_seperator: WordSeparator = WordSeparator::new();
+	/// Note: Can change to [WordSeparator]::new() for more advanced Unicode support
+	const word_seperator: WordSeparator = WordSeparator::AsciiSpace;
+
 	const avg_char_width_pixels: f32 = 0.11;
 
 	fn wrap_options(&self, width_in_pixels: f32) -> Options {
@@ -147,11 +150,49 @@ impl UnwrappedAbilityText {
 			for word in UnwrappedAbilityText::split_text(&line) {
 				let span = types[type_counter];
 				type_counter += 1;
-				line_res.push((word.to_string(), span));
+				let word = word.to_string();
+				assert_eq!(word, self.0.get(type_counter - 1).unwrap().0);
+				line_res.push((word, span));
 			}
 			res.push(line_res);
 		}
 
+		res.into()
+	}
+}
+
+impl AbilityText {
+	/// Combines spans if they are the same
+	pub fn normalize(self) -> Self {
+		let mut res = Vec::new();
+		for line in self.0 {
+			let mut res_line = Vec::new();
+			let mut last_span = HighlightedSpan::Normal;
+			let mut last_word = String::new();
+			for (word, span) in line {
+				if span == last_span {
+					last_word.push(' ');
+					last_word.push_str(&word);
+				} else {
+					if !last_word.is_empty() {
+						res_line.push((last_word, last_span));
+					}
+					last_word = word;
+					last_span = span;
+				}
+			}
+			if !last_word.is_empty() {
+				res_line.push((last_word, last_span));
+			}
+
+			// trims start of each line
+			if let Some((first_word, _)) = res_line.first() {
+				let first_word = first_word.trim_start();
+				res_line[0].0 = first_word.to_string();
+			}
+
+			res.push(res_line);
+		}
 		res.into()
 	}
 }
@@ -161,11 +202,68 @@ fn test_wrapping() {
 	let t = "When moving out of Tamerlan's turnpoint operators cannot MOVE cross-stream and can only MOVE one century up/down-stream";
 	let text = t.parse::<UnwrappedAbilityText>().unwrap();
 
-	eprintln!("{:#?}", text);
+	// eprintln!("{:#?}", text);
 
 	let text = text.with_known_width(AbilityText::large_width);
 
 	eprintln!("{}", text);
+	eprintln!("{:#?}", text);
+
+	let text = text.normalize();
+
+	eprint!("{}", text);
+	eprintln!("{:#?}", text);
+}
+
+impl FromStr for AbilityText {
+	type Err = anyhow::Error;
+	
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
+		let unwrapped = s.parse::<UnwrappedAbilityText>()?;
+		Ok(unwrapped.with_known_width(AbilityText::large_width).normalize())
+	}
+}
+
+impl AbilityForm {
+	const passive_asset_path: &str = "assets/card-icons/passive-ability.png";
+
+	const height: f32 = AgendaType::height;
+	pub fn width(&self) -> f32 {
+		match self {
+			AbilityForm::Passive => AgendaType::width,
+			AbilityForm::Cost(cost) => cost.width(),
+		}
+	}
+}
+
+impl SpawnToParent for AbilityForm {
+	fn spawn_to_child_builder(
+		&self,
+		parent: &mut ChildBuilder<'_, '_, '_>,
+		translation: Vec3,
+		(meshs, mat, ass): crate::utils::mutASS,
+	) -> Entity {
+		let mut parent = parent.spawn(PbrBundle {
+			transform: Transform::from_translation(translation),
+			..default()
+		});
+		parent.name("Ability Form Parent");
+
+		parent.with_children(|parent| match self {
+			AbilityForm::Passive => {
+				parent.spawn(PbrBundle {
+					mesh: meshs.add(shape::Quad::new(Vec2::new(self.width(), AbilityForm::height)).into()),
+					material: mat.add(texture_2d(ass.load(AbilityForm::passive_asset_path))),
+					..default()
+				}).name("Passive icon");
+			}
+			AbilityForm::Cost(cost) => {
+				cost.spawn_to_child_builder(parent, Vec3::ZERO, (meshs, mat, ass));
+			}
+		});
+
+		parent.id()
+	}
 }
 
 impl AbilityText {
@@ -173,4 +271,10 @@ impl AbilityText {
 
 	const large_width: f32 = 4.5;
 	const small_width: f32 = 3.5;
+}
+
+impl SpawnToParent for AbilityText {
+	fn spawn_to_child_builder(&self, parent: &mut ChildBuilder<'_, '_, '_>, translation: Vec3, ass: crate::utils::mutASS) -> Entity {
+		todo!()
+	}
 }
