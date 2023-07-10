@@ -6,38 +6,49 @@ use derive_more::{From, Into};
 use strum::EnumIs;
 use textwrap::{wrap, Options, WordSeparator};
 
-use crate::{
-	agendas::{AgendaCostItem, AgendaType},
-	utils::texture_2d,
-};
+use crate::{agendas::AgendaType, utils::texture_2d};
 
 use super::*;
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Ability {
-	form: AbilityForm,
+	pub form: AbilityForm,
 	text: AbilityText,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AbilityForm {
 	Cost(AgendaCost),
 	Passive,
 }
 
 /// Word that should be rendered in different colour
-#[derive(Default, EnumIs, PartialEq, Eq, Debug, Clone, Copy)]
+#[derive(Copy, Default, EnumIs, PartialEq, Eq, Debug, Clone)]
 enum HighlightedSpan {
 	#[default]
 	Normal,
 	YellowCaps,
 }
 
-/// Un line-wrapped highlighted text to render
-#[derive(From, Debug)]
-struct UnwrappedAbilityText(Vec<(String, HighlightedSpan)>);
+impl Ability {
+	pub const height: f32 = AbilityForm::height;
+	pub fn new(form: AbilityForm, text: String) -> Result<Ability, anyhow::Error> {
+		Ok(Self {
+			form,
+			text: text.parse()?,
+		})
+	}
+}
 
 /// *Wrapped* ability text
 #[derive(From, Debug, Clone, PartialEq, Eq)]
 struct AbilityText(Vec<Vec<(String, HighlightedSpan)>>);
+
+/// Un line-wrapped highlighted text to render
+#[derive(From, Debug)]
+struct UnwrappedAbilityText(Vec<(String, HighlightedSpan)>);
+
+/* #region unwrapped */
 
 impl FromStr for HighlightedSpan {
 	type Err = anyhow::Error;
@@ -217,15 +228,21 @@ fn test_wrapping() {
 
 impl FromStr for AbilityText {
 	type Err = anyhow::Error;
-	
+
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
 		let unwrapped = s.parse::<UnwrappedAbilityText>()?;
-		Ok(unwrapped.with_known_width(AbilityText::large_width).normalize())
+		Ok(
+			unwrapped
+				.with_known_width(AbilityText::large_width)
+				.normalize(),
+		)
 	}
 }
 
+/* #endregion */
+
 impl AbilityForm {
-	const passive_asset_path: &str = "assets/card-icons/passive-ability.png";
+	const passive_asset_path: &str = "card-icons/passive-ability.png";
 
 	const height: f32 = AgendaType::height;
 	pub fn width(&self) -> f32 {
@@ -251,11 +268,13 @@ impl SpawnToParent for AbilityForm {
 
 		parent.with_children(|parent| match self {
 			AbilityForm::Passive => {
-				parent.spawn(PbrBundle {
-					mesh: meshs.add(shape::Quad::new(Vec2::new(self.width(), AbilityForm::height)).into()),
-					material: mat.add(texture_2d(ass.load(AbilityForm::passive_asset_path))),
-					..default()
-				}).name("Passive icon");
+				parent
+					.spawn(PbrBundle {
+						mesh: meshs.add(shape::Quad::new(Vec2::new(self.width(), AbilityForm::height)).into()),
+						material: mat.add(texture_2d(ass.load(AbilityForm::passive_asset_path))),
+						..default()
+					})
+					.name("Passive icon");
 			}
 			AbilityForm::Cost(cost) => {
 				cost.spawn_to_child_builder(parent, Vec3::ZERO, (meshs, mat, ass));
@@ -274,7 +293,23 @@ impl AbilityText {
 }
 
 impl SpawnToParent for AbilityText {
-	fn spawn_to_child_builder(&self, parent: &mut ChildBuilder<'_, '_, '_>, translation: Vec3, ass: crate::utils::mutASS) -> Entity {
+	fn spawn_to_child_builder(
+		&self,
+		parent: &mut ChildBuilder<'_, '_, '_>,
+		translation: Vec3,
+		ass: crate::utils::mutASS,
+	) -> Entity {
 		todo!()
+	}
+}
+
+impl SpawnToParent for Ability {
+	fn spawn_to_child_builder(
+		&self,
+		parent: &mut ChildBuilder<'_, '_, '_>,
+		translation: Vec3,
+		ass: crate::utils::mutASS,
+	) -> Entity {
+		self.form.spawn_to_child_builder(parent, translation, ass)
 	}
 }

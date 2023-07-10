@@ -9,6 +9,7 @@ use std::num::NonZeroU8;
 mod century;
 use century::Century;
 
+use self::abilities::{Abilities, Ability, AbilityForm};
 use self::artwork::Artwork;
 use self::back::Back;
 use self::background::CardVisualBg;
@@ -16,6 +17,7 @@ use self::flavour_text::FlavourText;
 use self::gear_slots::{GearSlots, GearType};
 use self::general_info::{Class, ClassRace, Gender, Health, Race};
 use self::top_row::TopRow;
+mod abilities;
 mod agenda_cost;
 mod artwork;
 mod back;
@@ -24,8 +26,6 @@ mod flavour_text;
 mod gear_slots;
 mod general_info;
 mod top_row;
-mod ability;
-mod abilities;
 
 /// Follows style of card and contains all the information necessary to draw any type of card to the screen.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -38,6 +38,8 @@ pub struct CardVisual {
 	artwork: Artwork,
 
 	info: ControllerGeneralInfo,
+
+	abilities: Abilities,
 
 	flavour_text: FlavourText,
 }
@@ -114,14 +116,19 @@ fn construct_card_from_visual(
 	/* #endregion general info */
 
 	/* #region abilities */
-	// TODO
+	const abilities_y: f32 = (general_y + flavour_y) / 2.;
+	visual
+		.abilities
+		.spawn_to_parent(&mut parent, Vec3::Y * abilities_y + Vec3::Z * almost_zero, (meshs, mat, ass));
 	/* #endregion abilities */
 
 	/* #region flavour text */
 	const flavour_y: f32 = CARD_HEIGHT / -2. + FlavourText::margin_from_bottom;
-	visual
-		.flavour_text
-		.spawn_to_parent(&mut parent, Vec3::Y * flavour_y + Vec3::Z * almost_zero, (meshs, mat, ass));
+	visual.flavour_text.spawn_to_parent(
+		&mut parent,
+		Vec3::Y * flavour_y + Vec3::Z * almost_zero,
+		(meshs, mat, ass),
+	);
 	/* #endregion flavour text */
 
 	parent.id()
@@ -156,6 +163,13 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 			},
 			health: Health::new(NonZeroU8::new(1)),
 		},
+		abilities: Abilities::new(vec![Ability::new(
+			AbilityForm::Passive,
+			"Cool this is a MOVE".into(),
+		)
+		.unwrap()])
+		.unwrap(),
+
 		flavour_text: FlavourText::new("I live by a code. The code says nothing about time travel.")
 			.unwrap(),
 	};
