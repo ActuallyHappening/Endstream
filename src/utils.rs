@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
-use bevy::prelude::*;
 use bevy::ecs::system::EntityCommands;
+use bevy::prelude::*;
 use bevy_mod_picking::{backends::rapier::RapierPickTarget, prelude::*};
 
 use crate::level_0_depth_bias;
@@ -62,7 +62,7 @@ impl EntityCommandsExt for EntityCommands<'_, '_, '_> {
 /// Clearly demonstrates that this tyipcally enum directly corrolates uniquely to an asset
 /// as can be directly loaded using the [AssetServer].
 pub trait IntoAssetPath {
-	fn get_asset_path(&self,) -> String;
+	fn get_asset_path(&self) -> String;
 }
 
 pub trait TransformExt {
@@ -77,14 +77,24 @@ impl TransformExt for Transform {
 
 /// Offset by `Vec3::Z * almost_zero` to avoid z-fighting
 pub trait SpawnToParent {
-	fn spawn_to_child_builder(&self, parent: &mut ChildBuilder<'_, '_, '_>, translation: Vec3, ass: mutASS) -> Entity;
-	
-	fn spawn_to_parent(&self, parent: &mut EntityCommands<'_, '_, '_>, translation: Vec3, ass: mutASS) {
+	fn spawn_to_child_builder(
+		&self,
+		parent: &mut ChildBuilder<'_, '_, '_>,
+		translation: Vec3,
+		ass: mutASS,
+	) -> Entity;
+
+	fn spawn_to_parent(
+		&self,
+		parent: &mut EntityCommands<'_, '_, '_>,
+		translation: Vec3,
+		ass: mutASS,
+	) {
 		parent.with_children(|parent| {
 			self.spawn_to_child_builder(parent, translation, ass);
 		});
 	}
-	
+
 	// fn spawn_using_commands(&self, commands: &mut Commands) -> Entity {
 	// 	commands.spawn_empty().with_children(|parent| {
 	// 		self.spawn_using_entity_commands(parent);
@@ -96,4 +106,19 @@ pub trait SpawnToParent {
 	// 	// let entity = self.spawn_using_entity_commands(&mut parent);
 	// 	// parent.id()
 	// }
+}
+
+mod rows {
+	use derive_more::Constructor;
+
+	/// Useful & tested helper struct to calculate position of rows given a margin
+	#[derive(Constructor, Debug, Clone)]
+	pub struct Rows {
+		pub margin: f32,
+		pub row_height: f32,
+	}
+
+	impl Rows {
+		pub fn calculate_nth(&self, n: usize) -> f32 {}
+	}
 }

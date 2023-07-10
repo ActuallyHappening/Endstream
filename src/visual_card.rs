@@ -117,9 +117,11 @@ fn construct_card_from_visual(
 
 	/* #region abilities */
 	const abilities_y: f32 = (general_y + flavour_y) / 2.;
-	visual
-		.abilities
-		.spawn_to_parent(&mut parent, Vec3::Y * abilities_y + Vec3::Z * almost_zero, (meshs, mat, ass));
+	visual.abilities.spawn_to_parent(
+		&mut parent,
+		Vec3::Y * abilities_y + Vec3::Z * almost_zero,
+		(meshs, mat, ass),
+	);
 	/* #endregion abilities */
 
 	/* #region flavour text */
@@ -163,11 +165,14 @@ pub fn spawn_all_cards_debug(mut commands: Commands, mut ass: ASS) {
 			},
 			health: Health::new(NonZeroU8::new(1)),
 		},
-		abilities: Abilities::new(vec![Ability::new(
-			AbilityForm::Passive,
-			"Cool this is a MOVE".into(),
-		)
-		.unwrap()])
+		abilities: Abilities::new(vec![
+			Ability::new(AbilityForm::Passive, "Cool this is a MOVE".into()).unwrap(),
+			Ability::new(
+				AbilityForm::Passive,
+				"Another awesome ARMOUR ability!".into(),
+			)
+			.unwrap(),
+		])
 		.unwrap(),
 
 		flavour_text: FlavourText::new("I live by a code. The code says nothing about time travel.")

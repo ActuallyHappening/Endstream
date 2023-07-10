@@ -32,6 +32,8 @@ enum HighlightedSpan {
 
 impl Ability {
 	pub const height: f32 = AbilityForm::height;
+	pub const width: f32 = Abilities::width;
+
 	pub fn new(form: AbilityForm, text: String) -> Result<Ability, anyhow::Error> {
 		Ok(Self {
 			form,
@@ -245,6 +247,7 @@ impl AbilityForm {
 	const passive_asset_path: &str = "card-icons/passive-ability.png";
 
 	const height: f32 = AgendaType::height;
+	
 	pub fn width(&self) -> f32 {
 		match self {
 			AbilityForm::Passive => AgendaType::width,
